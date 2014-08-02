@@ -1,0 +1,9 @@
+Fog-Framework
+=============
+
+Petr Kobalicek <kobalicek.petr@gmail.com>
+
+Contributors
+============
+
+Jaroslav Smid <jardasmid@gmail.com>
