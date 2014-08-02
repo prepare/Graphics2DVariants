@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AggOOMain", "AggOOMain.vcproj", "{E6BCB74E-B383-44FF-B82F-B60002C7EA90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		DebugDLL|Win32 = DebugDLL|Win32
+		DefaultDLL|Win32 = DefaultDLL|Win32
+		Release|Win32 = Release|Win32
+		ReleaseDLL|Win32 = ReleaseDLL|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.Debug|Win32.Build.0 = Debug|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.DebugDLL|Win32.ActiveCfg = DebugDLL|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.DebugDLL|Win32.Build.0 = DebugDLL|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.DefaultDLL|Win32.ActiveCfg = DefaultDLL|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.DefaultDLL|Win32.Build.0 = DefaultDLL|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.Release|Win32.ActiveCfg = Release|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.Release|Win32.Build.0 = Release|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.ReleaseDLL|Win32.ActiveCfg = ReleaseDLL|Win32
+		{E6BCB74E-B383-44FF-B82F-B60002C7EA90}.ReleaseDLL|Win32.Build.0 = ReleaseDLL|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

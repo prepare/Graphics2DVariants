@@ -1,0 +1,181 @@
+
+/*******************************************************************\
+
+This file is part of the AggOO library.  AggOO provides a way to emulate
+GDI+ using Anti-Grain Geometry (http://www.antigrain.com) as the rendering
+backend.
+
+AggOO - Version 0.1
+Copyright (c) 2006 Dratek Software
+
+Anti-Grain Geometry - Version 2.4 
+Copyright (C) 2002-2005 Maxim Shemanarev (McSeem) 
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions 
+are met:
+
+  1. Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the 
+     distribution. 
+
+  3. The name of the author may not be used to endorse or promote 
+     products derived from this software without specific prior 
+     written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR 
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+\*******************************************************************/
+
+$Id: AggOO_RoadMap.txt,v 1.3 2007/10/03 14:13:42 dratek Exp $
+
+AggOO_RoadMap.txt -- Roadmap for the AggOO library
+
+Author: Chad M. Draper
+
+/**
+    @remarks
+    This is a basic roadmap of the progress of the AggOO library.  It is quite
+    possible that things will change significantly during development.  However,
+    for the most part, additional features will not be listed more than 1 release
+    into the future.  Bugs will be added to the next revision.
+    
+    @par
+    Version 1.0 of AggOO should have emulated everything in GDI+.  This will
+    require wrapping additional Windows handles such as HDC, HWND, etc. for non-
+    Windows platforms.  Until version 1.0 is reached, groups of features will be
+    added for each minor version, based on what is considered necessary at the
+    time.  I imagine few people use all of the features of GDI+, and my usage
+    is fairly limited to basic drawing.  For this reason, it may take a while to
+    get past the first couple versions.  Initially, AggOO will do the tasks that
+    I am needing at the time.  Additional features will be added as they are
+    needed or as time allows.
+*/
+
+GDI+ Compatibility Chart
+------------------------
+
+    ----------------------------------------------------------------------------
+    | GDI+ Function                     | Implementation in AggOO              |
+    ============================================================================
+    | GdiplusBase                       | Yes [CMD 2006-09-07]                 |
+    +--------------------------------------------------------------------------+
+    | AdjustableArrowCap                |                                      |
+    | CustomLineCap                     |                                      |
+    +--------------------------------------------------------------------------+
+    | Bitmap                            | Yes [CMD 2006-09-08]                 |
+    | BitmapData                        | Yes [CMD 2006-09-08]                 |
+    | CachedBitmap                      |                                      |
+    | Image                             | Partial [CMD 2006-09-08]             |
+    | ImageAttributes                   |                                      |
+    | ImageCodecInfo                    |                                      |
+    | PropertyItem                      |                                      |
+    +--------------------------------------------------------------------------+
+    | Brush                             | Yes [CMD 2006-09-08]                 |
+    | HatchBrush                        |                                      |
+    | LinearGradientBrush               | Yes [CMD 2006-10-20]                 |
+    | PathGradientBrush                 |                                      |
+    | SolidBrush                        | Yes [CMD 2006-09-08]                 |
+    | TextureBrush                      | Yes [CMD 2006-10-06]                 |
+    +--------------------------------------------------------------------------+
+    | Pen                               | Partial [CMD 2006-09-14]             |
+    +--------------------------------------------------------------------------+
+    | CharacterRange                    |                                      |
+    | Font                              |                                      |
+    | FontCollection                    |                                      |
+    | FontFamily                        |                                      |
+    | InstalledFontCollection           |                                      |
+    | PrivateFontCollection             |                                      |
+    | StringFormat                      |                                      |
+    +--------------------------------------------------------------------------+
+    | Color                             | Partial [CMD 2006-09-07]             |
+    +--------------------------------------------------------------------------+
+    | EncoderParameter                  |                                      |
+    | EncoderParameters                 |                                      |
+    +--------------------------------------------------------------------------+
+    | Graphics                          | Partial [CMD 2006-09-14]             |
+    | GraphicsPath                      | Partial [CMD 2006-09-14]             |
+    | GraphicsPathIterator              |                                      |
+    | PathData                          | Yes                                  |
+    +--------------------------------------------------------------------------+
+    | Matrix                            | Yes [CMD 2006-09-27]                 |
+    +--------------------------------------------------------------------------+
+    | Metafile                          |                                      |
+    | MetafileHeader                    |                                      |
+    +--------------------------------------------------------------------------+
+    | Point                             | Yes [CMD 2006-09-06]                 |
+    | PointF                            | Yes [CMD 2006-09-06]                 |
+    | Rect                              | Yes [CMD 2006-09-06]                 |
+    | RectF                             | Yes [CMD 2006-09-06]                 |
+    | Region                            |                                      |
+    | Size                              | Yes [CMD 2006-09-06]                 |
+    | SizeF                             | Yes [CMD 2006-09-06]                 |
+    ----------------------------------------------------------------------------
+
+
+Version 0.2
+-----------
+    Proposed Changes:
+    -----------------
+    * Add Font and text rendering capabilities
+    * Implement a color matrix.  In addition to the ColorMatrix used in GDI+,
+      add a ColorMatrixExt, which will also implement hue, saturation, and value
+      offsets (based on the QColorMatrix
+      http://www.codeguru.com/cpp/g-m/gdi/gdi/article.php/c3667/.)
+    * Add distortion effects (wave and swirl) to the texture and gradient
+      brushes (see the AGG distortions demo.)
+    * Add options to change the smoothing mode (i.e. disable anti-aliasing)
+    * Implement a bilinear image filter that works with plain alpha formats
+
+    Status:
+    -------
+      2007-08-31
+		A preliminary color matrix is implemented.  There is also a ColorMatrixExt,
+		which is derived from ColorMatrix and based on QColorMatrix (hue, saturation,
+		and value manipulation.)  There are also default matrices for converting to
+		grayscale and sepia tone.
+		
+		Antialiasing can be disabled, though AGG doesn't always look very nice when
+		aliased.  In particular, it has issues when the line width is less than 1 (or
+		is it 2?)
+
+    
+Version 0.1 - projected release date: 2006-10-30
+-----------
+AggOO needs to allow for rendering of basic shapes using solid, textured, or
+gradient fills.
+
+    * Implement basic Color, Pen, Brush, Bitmap, Graphics, GraphicsPath, and
+      Matrix features.  Only the minimum is expected in order to render shapes.
+
+    Status:
+    -------
+      2006-10-20
+        Able to render nearly all shape types.  Added GraphicsPathExt and
+        GraphicsExt classes to support additional shapes (round-rect and star.)
+
+        SolidBrush, TextureBrush, and LinearGradientBrush are working.  The
+        gradient brush supports additional styles not available in GDI+ (i.e.
+        radial, conic, etc.)  There is also LinearGradientBrushExt, which has an
+        extra method for offsetting the gradient.
+
+      2006-09-22
+        Able to render arcs, pies, ellipses, rectangles, lines, and polygons
+        using either a pen (for path stroking) or a brush (for filling.)
+        Currently limited to solid color only.  Stroking allows for various pen
+        settings (line cap, miter limit, dash style,) but none of the custom
+        caps or styles are implemented.

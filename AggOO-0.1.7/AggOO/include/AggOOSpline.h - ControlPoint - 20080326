@@ -1,0 +1,388 @@
+
+/*******************************************************************\
+
+This file is part of the AggOO library.  AggOO provides a way to emulate
+GDI+ using Anti-Grain Geometry (http://www.antigrain.com) as the rendering
+backend.
+
+AggOO - Version 0.1
+Copyright (c) 2006 Dratek Software
+
+Anti-Grain Geometry - Version 2.4 
+Copyright (C) 2002-2005 Maxim Shemanarev (McSeem) 
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions 
+are met:
+
+  1. Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the 
+     distribution. 
+
+  3. The name of the author may not be used to endorse or promote 
+     products derived from this software without specific prior 
+     written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR 
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+\*******************************************************************/
+
+/*! $Id: AggOOSpline.h\040-\040ControlPoint\040-\04020080326,v 1.1 2008/04/02 18:27:16 dratek Exp $
+ *  @file   AggOOSpline.h
+ *  @author Chad M. Draper
+ *  @date   March 12, 2008
+ *  @brief  Defines a spline.
+ *  
+ */
+
+#ifndef AggOOSpline_H_
+#define AggOOSpline_H_
+
+#include "AggOOBase.h"
+#include "AggOOEnums.h"
+#include "AggOOTypes.h"
+#include "AggOOSharedPtr.h"
+
+#include <vector>
+
+namespace AggOO
+{
+    // Forward declarations of the control point classes
+    class LinearControlPoint;
+    class QuadraticControlPoint;
+    class CubicControlPoint;
+
+    /** @class ControlPoint
+        A ControlPoint is a point which defines the spline.  This is a base
+        class and should be overridden for specific types of nodes (i.e. linear,
+        quadratic, cubic, etc.)
+    */
+    class ControlPoint
+    {
+    public:
+        //enum NodeType
+        //{
+        //    NodeLinear,
+        //    NodeCubic,
+        //    NodeQuadric
+        //};
+
+        AggOO::PointF mPosition;
+
+        ControlPoint( const AggOO::PointF& pos );
+
+        /** Clone the point as a linear control point */
+        virtual ControlPoint* CloneLinear() const = 0;
+        /** Clone the point as a quadratic control point */
+        virtual ControlPoint* CloneQuadratic() const = 0;
+        /** Clone the point as a cubic control point */
+        virtual ControlPoint* CloneCubic() const = 0;
+
+        virtual AggOO::REAL Length( const ControlPoint& prevPt, AggOO::REAL delta = 0.001 );
+        virtual AggOO::PointF Position( const ControlPoint& prevPt, AggOO::REAL ratio ) = 0;
+
+        /** Test whether this point is at the same location as another point */
+        bool PositionEqual( const ControlPoint& other );
+
+        /** Create a new control point at a given position.  This will be used
+            as a continuation of the spline.
+        */
+        virtual ControlPoint* CreateContinuation( const AggOO::PointF& pos ) = 0;
+
+        /** Write to a stream */
+        inline friend std::ostream& operator<<( std::ostream& stream, const ControlPoint& src )
+        {
+            return src.ToStream( stream );
+        }
+
+    protected:
+        virtual std::ostream& ToStream( std::ostream& stream ) const = 0;
+    };
+
+    /** @class LinearControlPoint
+        Specialized ControlPoint for linear nodes.
+    */
+    class LinearControlPoint : public ControlPoint
+    {
+    public:
+        LinearControlPoint( const AggOO::PointF& pos );
+
+        /** Clone the point as a linear control point */
+        ControlPoint* CloneLinear() const;
+        /** Clone the point as a quadratic control point */
+        ControlPoint* CloneQuadratic() const;
+        /** Clone the point as a cubic control point */
+        ControlPoint* CloneCubic() const;
+
+        AggOO::REAL Length( const ControlPoint& prevPt, AggOO::REAL );
+        AggOO::PointF Position( const ControlPoint& prevPt, AggOO::REAL ratio );
+
+        /** Create a new control point at a given position.  This will be used
+            as a continuation of the spline.
+        */
+        ControlPoint* CreateContinuation( const AggOO::PointF& pos );
+
+    protected:
+        std::ostream& ToStream( std::ostream& stream ) const;
+    };
+
+    /** @class QuadraticControlPoint
+        Specialized ControlPoint for quadratic curve nodes.
+    */
+    class QuadraticControlPoint : public ControlPoint
+    {
+    public:
+        AggOO::PointF mPt1;
+
+        QuadraticControlPoint( const AggOO::PointF& cp, const AggOO::PointF& pos );
+
+        /** Clone the point as a linear control point */
+        ControlPoint* CloneLinear() const;
+        /** Clone the point as a quadratic control point */
+        ControlPoint* CloneQuadratic() const;
+        /** Clone the point as a cubic control point */
+        ControlPoint* CloneCubic() const;
+
+        AggOO::PointF Position( const ControlPoint& prevPt, AggOO::REAL ratio );
+
+        /** Create a new control point at a given position.  This will be used
+            as a continuation of the spline.
+        */
+        ControlPoint* CreateContinuation( const AggOO::PointF& pos );
+
+    protected:
+        std::ostream& ToStream( std::ostream& stream ) const;
+    };
+
+    /** @class CubicControlPoint
+        Specialized ControlPoint for cubic curve nodes
+    */
+    class CubicControlPoint : public ControlPoint
+    {
+    public:
+        AggOO::PointF mPt1, mPt2;
+
+        CubicControlPoint( const AggOO::PointF& cp1, const AggOO::PointF& cp2, const AggOO::PointF& pos );
+
+        /** Clone the point as a linear control point */
+        ControlPoint* CloneLinear() const;
+        /** Clone the point as a quadratic control point */
+        ControlPoint* CloneQuadratic() const;
+        /** Clone the point as a cubic control point */
+        ControlPoint* CloneCubic() const;
+
+        AggOO::PointF Position( const ControlPoint& prevPt, AggOO::REAL ratio );
+
+        /** Create a new control point at a given position.  This will be used
+            as a continuation of the spline.
+        */
+        ControlPoint* CreateContinuation( const AggOO::PointF& pos );
+
+    protected:
+        std::ostream& ToStream( std::ostream& stream ) const;
+    };
+
+    /** @class Spline
+        Defines a spline, which can be used for such uses as a path.
+    */
+    class _AggOOExport Spline : public Base
+    {
+    private:
+        /** @typedef ControlPointPtr
+            Defines a shared pointer to a control point
+        */
+        typedef AggOO::SharedPtr< ControlPoint > ControlPointPtr;
+        /** @struct ControlPointLength
+            Class which maintains a control point, it's distance from the spline
+            start, and the distance from the previous point (segment length.)
+            This makes calculating the length of the spline more efficient, as
+            the lengths only need to be calculated when points are added or
+            removed, and therefore makes calculation on points along the spline
+            much more efficient.
+        */
+        struct ControlPointLength
+        {
+            ControlPointPtr mControlPointPtr;   /**< The actual control point */
+            AggOO::REAL     mDistance;          /**< Distance TO this point */
+            AggOO::REAL     mSegmentLength;     /**< Length of the segment between this point and the previous point */
+
+            ControlPointLength( ControlPoint* pt )
+                : mDistance( 0.0 ),
+                mSegmentLength( 0.0 ),
+                mControlPointPtr( ControlPointPtr( pt ) )
+            {
+            }
+
+            /** Get the distance to this point */
+            AggOO::REAL Distance() const            { return mDistance; }
+            /** Get the segment length */
+            AggOO::REAL SegmentLength() const       { return mSegmentLength; }
+
+            /** Calculate the segment length */
+            AggOO::REAL CalculateLength( const ControlPointLength& prevPt, AggOO::REAL delta = 0.001 );
+
+            /** Update the distance, given the previous point */
+            AggOO::REAL UpdateDistance( const ControlPointLength& prevPt );
+
+            /** Write to a stream */
+            inline friend std::ostream& operator<<( std::ostream& stream, const ControlPointLength& src )
+            {
+                std::ostream::sentry opfx(stream);
+                if ( !opfx )
+                    return stream;
+
+                stream << "Point: " << src.mControlPointPtr.get() << ", Distance: " << src.mDistance << ", Segment Length: " << src.mSegmentLength;
+                return stream;
+            }
+        };
+        std::vector< ControlPointLength > mPoints;  /**< Array of control points defining the spline */
+
+        AggOO::REAL mInterpolationDelta;        /**< Size of difference when calculating the segment length */
+
+    protected:
+        /** Make a single node linear */
+        void makeNodeLinear( size_t index );
+        /** Make a single node quadratic */
+        void makeNodeQuadratic( size_t index );
+        /** Make a single node cubic */
+        void makeNodeCubic( size_t index );
+
+    public:
+        /** Constructor */
+        Spline(void);
+        /** Destructor */
+        ~Spline(void);
+
+        /** Set the interpolation delta, which is the distance between segments
+            when interpolating the curve.
+        */
+        void InterpolationDelta( AggOO::REAL delta )    { mInterpolationDelta = delta; }
+        /** Get the interpolation delta */
+        AggOO::REAL InterpolationDelta() const          { return mInterpolationDelta; }
+
+        /** Move to a point.  If this is the first point, it is the start of
+            the spline.  Otherwise, it is treated as a LineTo.
+            @param  pos     Position of the point
+            @param  rel     If true, and this is not the first point, then this
+                            is an offset from the previous point to which to
+                            draw the line.  The initial MoveTo will always be
+                            absolute.
+        */
+        void MoveTo( const PointF& pos, bool rel = false );
+
+        /** Draw a straight line to a point.
+            @param  pos     End position of the line
+            @param  rel     Indicates if pos is an absolute position, or
+                            relative to the previous position.
+        */
+        void LineTo( const PointF& pos, bool rel = false );
+
+        /** Draw a quadratic curve to a point.
+            @param  pos     End position of the curve
+            @param  ctrlPt  Control point of the curve
+            @param  rel     Indicates if pos and ctrlPt are absolute positions,
+                            or relative to the previous position.
+        */
+        void Curve3( const PointF& pos, const PointF& ctrlPt, bool rel = false );
+
+        /** Draw a cubic curve to a point.
+            @param  pos     End position of the curve
+            @param  ctrlPt1 First control point of the curve
+            @param  ctrlPt2 Second control point of the curve
+            @param  rel     Indicates if pos, ctrlPt1, and ctrlPt are absolute
+                            positions, or relative to the previous position.
+        */
+        void Curve4( const PointF& pos, const PointF& ctrlPt1, const PointF& ctrlPt1, bool rel = false );
+
+        /** Remove a point from the spline at a given index */
+        size_t  RemovePoint( size_t index );
+
+        /** Clear all points from the spline */
+        void    Clear();
+
+        /** Get a control point at a given index in the spline */
+        ControlPoint& GetPoint( size_t index ) const;
+
+        /** Get the number of points in the spline */
+        size_t  GetPointCount() const                   { return mPoints.size(); }
+
+        /** Return the length of the spline */
+        AggOO::REAL Length() const;
+
+        /** Return the length of a segment at a given index */
+        AggOO::REAL SegmentLength( size_t segment ) const;
+        /** Find a position on the spline at a given ratio (0..1, where 0 is the
+            start of the spline, and 1 is the end of the spline.)
+        */
+        AggOO::PointF Position( AggOO::REAL ratio ) const;
+
+        /** Check if the spline is closed */
+        bool IsClosed() const;
+
+        /** Close the spline (if it is not already closed.)  This cannot be
+            undone, but since all it really does is add a point to the end of
+            the spline (making a segment that goes back to the original point,)
+            deleting the last point in the spline would be equivalent to un-
+            doing this action.
+        */
+        size_t Close();
+
+        /** Make a specified node linear
+            @param  index       Index of the node to make linear.  If -1, then
+                                entire spline is converted.
+        */
+        void MakeLinear( int index = -1 );
+
+        /** Make a specified node quadratic
+            @param  index       Index of the node to make quadratic.  If -1, then
+                                entire spline is converted.
+        */
+        void MakeQuadratic( int index = -1 );
+
+        /** Make a specified node cubic
+            @param  index       Index of the node to make cubic.  If -1, then
+                                entire spline is converted.
+        */
+        void MakeCubic( int index = -1 );
+
+        /** Write to a stream */
+        inline friend std::ostream& operator<<( std::ostream& stream, const Spline& src )
+        {
+            std::ostream::sentry opfx(stream);
+            if ( !opfx )
+                return stream;
+
+            stream << "Spline\n";
+            stream << "{\n";
+            stream << "    Length = " << src.Length() << std::endl;
+            stream << "    Point Count = " << src.GetPointCount() << std::endl;
+            stream << "    {\n";
+            for ( int i = 0; i < src.GetPointCount(); i++ )
+            {
+                stream << "        Point " << i << ": " << src.GetPoint( i ) << std::endl;
+            }
+            stream << "    }\n";
+            stream << "}\n";
+
+            return stream;
+        }
+
+    }; // namespace Spline
+
+} // namespace AggOO
+
+#endif  // AggOOSpline_H_

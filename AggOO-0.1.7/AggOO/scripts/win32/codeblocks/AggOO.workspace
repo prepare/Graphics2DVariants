@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_workspace_file>
+<CodeBlocks_workspace_file>
+	<Workspace title="AggOO workspace">
+		<Project filename="AggOO.cbp"/>
+		<Project filename="AggOOMain.cbp" active="1"/>
+	</Workspace>
+</CodeBlocks_workspace_file>

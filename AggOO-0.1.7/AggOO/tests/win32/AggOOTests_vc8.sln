@@ -1,0 +1,31 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AggOODemo_vc8", "AggOODemo\AggOODemo_vc8.vcproj", "{933B5946-1305-4DC0-B84F-BC427ED85B56}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GdiplusDemo_vc8", "GdiplusDemo\GdiplusDemo_vc8.vcproj", "{0F240CF4-E682-4B69-A91E-D1692C94D692}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FloodFillDemo", "FloodFillDemo\FloodFillDemo.vcproj", "{3D28444D-1FDB-4F64-B5AC-43BBB7D04271}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{933B5946-1305-4DC0-B84F-BC427ED85B56}.Debug|Win32.ActiveCfg = Debug|Win32
+		{933B5946-1305-4DC0-B84F-BC427ED85B56}.Debug|Win32.Build.0 = Debug|Win32
+		{933B5946-1305-4DC0-B84F-BC427ED85B56}.Release|Win32.ActiveCfg = Release|Win32
+		{933B5946-1305-4DC0-B84F-BC427ED85B56}.Release|Win32.Build.0 = Release|Win32
+		{0F240CF4-E682-4B69-A91E-D1692C94D692}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F240CF4-E682-4B69-A91E-D1692C94D692}.Debug|Win32.Build.0 = Debug|Win32
+		{0F240CF4-E682-4B69-A91E-D1692C94D692}.Release|Win32.ActiveCfg = Release|Win32
+		{0F240CF4-E682-4B69-A91E-D1692C94D692}.Release|Win32.Build.0 = Release|Win32
+		{3D28444D-1FDB-4F64-B5AC-43BBB7D04271}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3D28444D-1FDB-4F64-B5AC-43BBB7D04271}.Debug|Win32.Build.0 = Debug|Win32
+		{3D28444D-1FDB-4F64-B5AC-43BBB7D04271}.Release|Win32.ActiveCfg = Release|Win32
+		{3D28444D-1FDB-4F64-B5AC-43BBB7D04271}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

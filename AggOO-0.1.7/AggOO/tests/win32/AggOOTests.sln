@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AggOODemo", "AggOODemo\AggOODemo.vcproj", "{F1B8C810-FC3B-4CB1-B4CD-A0C9DC31216C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GdiplusDemo", "GdiplusDemo\GdiplusDemo.vcproj", "{AFAAB06C-81D5-4CDA-BFB8-E43AD3CDAB04}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{F1B8C810-FC3B-4CB1-B4CD-A0C9DC31216C}.Debug.ActiveCfg = Debug|Win32
+		{F1B8C810-FC3B-4CB1-B4CD-A0C9DC31216C}.Debug.Build.0 = Debug|Win32
+		{F1B8C810-FC3B-4CB1-B4CD-A0C9DC31216C}.Release.ActiveCfg = Release|Win32
+		{F1B8C810-FC3B-4CB1-B4CD-A0C9DC31216C}.Release.Build.0 = Release|Win32
+		{AFAAB06C-81D5-4CDA-BFB8-E43AD3CDAB04}.Debug.ActiveCfg = Debug|Win32
+		{AFAAB06C-81D5-4CDA-BFB8-E43AD3CDAB04}.Debug.Build.0 = Debug|Win32
+		{AFAAB06C-81D5-4CDA-BFB8-E43AD3CDAB04}.Release.ActiveCfg = Release|Win32
+		{AFAAB06C-81D5-4CDA-BFB8-E43AD3CDAB04}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

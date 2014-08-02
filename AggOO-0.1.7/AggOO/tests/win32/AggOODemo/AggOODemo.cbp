@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!DOCTYPE CodeBlocks_project_file>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="1"/>
+	<Project>
+		<Option title="AggOODemo"/>
+		<Option makefile="Makefile"/>
+		<Option makefile_is_custom="0"/>
+		<Option compiler="0"/>
+		<Build>
+			<Target title="Debug">
+				<Option output="..\..\bin\AggOODemo_d.exe"/>
+				<Option working_dir="."/>
+				<Option object_output="Debug"/>
+				<Option deps_output=".deps"/>
+				<Option type="0"/>
+				<Option compiler="0"/>
+				<Option projectResourceIncludeDirsRelation="0"/>
+				<Compiler>
+					<Add option="-DWIN32"/>
+					<Add option="-D_DEBUG"/>
+					<Add option="-D_WINDOWS"/>
+					<Add option="-W"/>
+					<Add option="-O0"/>
+				</Compiler>
+				<Linker>
+					<Add library="AggOO_d"/>
+					<Add library="AggOOMain_d"/>
+					<Add library="agg_main_d"/>
+					<Add library="agg_d"/>
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="..\..\bin\AggOODemo.exe"/>
+				<Option working_dir="."/>
+				<Option object_output="Release"/>
+				<Option deps_output=".deps"/>
+				<Option type="0"/>
+				<Option compiler="0"/>
+				<Option projectResourceIncludeDirsRelation="0"/>
+				<Compiler>
+					<Add option="-DWIN32"/>
+					<Add option="-DNDEBUG"/>
+					<Add option="-D_WINDOWS"/>
+					<Add option="-W"/>
+					<Add option="-g"/>
+					<Add option="-O2"/>
+				</Compiler>
+				<Linker>
+					<Add library="AggOO"/>
+					<Add library="AggOOMain"/>
+					<Add library="agg_main"/>
+					<Add library="agg"/>
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="..\..\AggOODemo.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

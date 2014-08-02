@@ -1,0 +1,26 @@
+
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C++ Express 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AggOO_vc8", "AggOO_vc8.vcproj", "{81131FFA-A203-4CB6-A7EB-48572B3A9B5D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AggOOMain_vc8", "AggOOMain_vc8.vcproj", "{5D653363-353C-4663-947C-32FAAD7AB1DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81131FFA-A203-4CB6-A7EB-48572B3A9B5D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{81131FFA-A203-4CB6-A7EB-48572B3A9B5D}.Debug|Win32.Build.0 = Debug|Win32
+		{81131FFA-A203-4CB6-A7EB-48572B3A9B5D}.Release|Win32.ActiveCfg = Release|Win32
+		{81131FFA-A203-4CB6-A7EB-48572B3A9B5D}.Release|Win32.Build.0 = Release|Win32
+		{5D653363-353C-4663-947C-32FAAD7AB1DF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5D653363-353C-4663-947C-32FAAD7AB1DF}.Debug|Win32.Build.0 = Debug|Win32
+		{5D653363-353C-4663-947C-32FAAD7AB1DF}.Release|Win32.ActiveCfg = Release|Win32
+		{5D653363-353C-4663-947C-32FAAD7AB1DF}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

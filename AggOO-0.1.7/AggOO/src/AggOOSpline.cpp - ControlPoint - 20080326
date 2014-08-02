@@ -1,0 +1,574 @@
+
+/*******************************************************************\
+
+This file is part of the AggOO library.  AggOO provides a way to emulate
+GDI+ using Anti-Grain Geometry (http://www.antigrain.com) as the rendering
+backend.
+
+AggOO - Version 0.1
+Copyright (c) 2006 Dratek Software
+
+Anti-Grain Geometry - Version 2.4 
+Copyright (C) 2002-2005 Maxim Shemanarev (McSeem) 
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions 
+are met:
+
+  1. Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the 
+     distribution. 
+
+  3. The name of the author may not be used to endorse or promote 
+     products derived from this software without specific prior 
+     written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR 
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+\*******************************************************************/
+
+
+/*! $Id: AggOOSpline.cpp\040-\040ControlPoint\040-\04020080326,v 1.1 2008/04/02 18:27:17 dratek Exp $
+ *  @file   AggOOSpline.cpp
+ *  
+ */
+
+#include "AggOOSpline.h"
+
+namespace AggOO
+{
+    //--------------------------------------------------------------------------
+    // ControlPoint
+    //--------------------------------------------------------------------------
+
+    ControlPoint::ControlPoint( const AggOO::PointF& pos )
+        : mPosition( pos )
+    {
+    }
+
+    AggOO::REAL ControlPoint::Length( const ControlPoint& prevPt, AggOO::REAL delta /*= 0.001*/ )
+    {
+        AggOO::INT  numSegments = 4;
+        AggOO::REAL deltaLength = 1.0;
+        AggOO::REAL prevLength = 0.0;
+        AggOO::REAL ratio = delta;
+        AggOO::REAL length;
+
+        while ( deltaLength > delta )
+        {
+            AggOO::REAL deltaValue = 1.0 / static_cast< AggOO::REAL >( numSegments );
+            length = 0.0;
+            AggOO::PointF prevPos = prevPt.mPosition;
+            for ( int i = 1; i <= numSegments; i++ )
+            {
+                ratio = i * deltaValue;
+                AggOO::PointF pos = Position( prevPt, ratio );
+                length += AggOO::PointExtF::Distance( pos, prevPos );
+                prevPos = pos;
+            }
+            deltaLength = ( length - prevLength ) / length;
+            prevLength  = length;
+            numSegments *= 2;
+        }
+
+        return length;
+    }
+
+    //PositionEqual-------------------------------------------------------------
+    bool ControlPoint::PositionEqual( const ControlPoint& other )
+    {
+        return mPosition.Equals( other.mPosition );
+    }
+
+    //--------------------------------------------------------------------------
+    // LinearControlPoint
+    //--------------------------------------------------------------------------
+
+    LinearControlPoint::LinearControlPoint( const AggOO::PointF& pos )
+        : ControlPoint( pos )
+    {
+    }
+
+    //CloneLinear---------------------------------------------------------------
+    ControlPoint* LinearControlPoint::CloneLinear() const
+    {
+        return new LinearControlPoint( mPosition );
+    }
+
+    //CloneQuadratic------------------------------------------------------------
+    ControlPoint* LinearControlPoint::CloneQuadratic() const
+    {
+        return new QuadraticControlPoint( mPosition, mPosition );
+    }
+
+    //CloneCubic=---------------------------------------------------------------
+    ControlPoint* LinearControlPoint::CloneCubic() const
+    {
+        return new CubicControlPoint( mPosition, mPosition, mPosition );
+    }
+
+    AggOO::REAL LinearControlPoint::Length( const ControlPoint& prevPt, AggOO::REAL )
+    {
+        return AggOO::PointExtF::Distance( mPosition, prevPt.mPosition );
+    }
+
+    AggOO::PointF LinearControlPoint::Position( const ControlPoint& prevPt, AggOO::REAL ratio )
+    {
+        AggOO::PointF pos = prevPt.mPosition * ( 1.0 - ratio ) + mPosition * ratio;
+        return pos;
+    }
+
+    //CreateContinuation--------------------------------------------------------
+    ControlPoint* LinearControlPoint::CreateContinuation( const AggOO::PointF& pos )
+    {
+        return new LinearControlPoint( pos );
+    }
+
+    std::ostream& LinearControlPoint::ToStream( std::ostream& stream ) const
+    {
+        std::ostream::sentry opfx(stream);
+        if ( !opfx )
+            return stream;
+
+        return ( stream << "LinearControlPoint{ " << mPosition << " }" );
+    }
+
+    //--------------------------------------------------------------------------
+    // QuadraticControlPoint
+    //--------------------------------------------------------------------------
+
+    QuadraticControlPoint::QuadraticControlPoint( const AggOO::PointF& cp, const AggOO::PointF& pos )
+        : mPt1( cp ), ControlPoint( pos )
+    {
+    }
+
+    //CloneLinear---------------------------------------------------------------
+    ControlPoint* QuadraticControlPoint::CloneLinear() const
+    {
+        return new LinearControlPoint( mPosition );
+    }
+
+    //CloneQuadratic------------------------------------------------------------
+    ControlPoint* QuadraticControlPoint::CloneQuadratic() const
+    {
+        return new QuadraticControlPoint( mPt1, mPosition );
+    }
+
+    //CloneCubic=---------------------------------------------------------------
+    ControlPoint* QuadraticControlPoint::CloneCubic() const
+    {
+        return new CubicControlPoint( mPt1, mPt1, mPosition );
+    }
+
+    AggOO::PointF QuadraticControlPoint::Position( const ControlPoint& prevPt, AggOO::REAL ratio )
+    {
+        AggOO::REAL invRatio = 1.0 - ratio;
+
+        AggOO::PointF pos = prevPt.mPosition * invRatio * invRatio + mPt1 * 2.0 * ratio * invRatio + mPosition * ratio * ratio;
+        return pos;
+    }
+
+    //CreateContinuation--------------------------------------------------------
+    ControlPoint* QuadraticControlPoint::CreateContinuation( const AggOO::PointF& pos )
+    {
+        // Calculate a control point so that the vector from this point is in
+        // the same direction, but the point lies between this point and pos.
+        AggOO::PointF ctrlPt = PointExtF::MidPoint( mPosition, pos );
+
+        return new QuadraticControlPoint( ctrlPt, pos );
+    }
+
+    std::ostream& QuadraticControlPoint::ToStream( std::ostream& stream ) const
+    {
+        std::ostream::sentry opfx(stream);
+        if ( !opfx )
+            return stream;
+
+        return ( stream << "QuadraticControlPoint{ " << mPt1 << ", " << mPosition << " }" );
+    }
+
+    //--------------------------------------------------------------------------
+    // QuadraticControlPoint
+    //--------------------------------------------------------------------------
+
+    CubicControlPoint::CubicControlPoint( const AggOO::PointF& cp1, const AggOO::PointF& cp2, const AggOO::PointF& pos )
+        : mPt1( cp1 ), mPt2( cp2 ), ControlPoint( pos )
+    {
+    }
+
+    //CloneLinear---------------------------------------------------------------
+    ControlPoint* CubicControlPoint::CloneLinear() const
+    {
+        return new LinearControlPoint( mPosition );
+    }
+
+    //CloneQuadratic------------------------------------------------------------
+    ControlPoint* CubicControlPoint::CloneQuadratic() const
+    {
+        return new QuadraticControlPoint( mPt1 + ( mPt1 + mPt2 ) * 0.5, mPosition );
+    }
+
+    //CloneCubic=---------------------------------------------------------------
+    ControlPoint* CubicControlPoint::CloneCubic() const
+    {
+        return new CubicControlPoint( mPt1, mPt2, mPosition );
+    }
+
+    AggOO::PointF CubicControlPoint::Position( const ControlPoint& prevPt, AggOO::REAL ratio )
+    {
+        AggOO::REAL invRatio = 1.0 - ratio;
+        AggOO::REAL invRatio2 = invRatio * invRatio;
+        AggOO::REAL ratio2 = ratio * ratio;
+
+        AggOO::PointF pos = prevPt.mPosition * invRatio2 * invRatio + mPt1 * 3.0 * ratio * invRatio2 + mPt2 * 3.0 * ratio2 * invRatio + mPosition * ratio2 * ratio;
+        return pos;
+    }
+
+    //CreateContinuation--------------------------------------------------------
+    ControlPoint* CubicControlPoint::CreateContinuation( const AggOO::PointF& pos )
+    {
+        // The out vector for this point is the same as the in vector.  The in
+        // vector for the new point is the new position (zero-length.)
+        AggOO::PointF outVec = mPosition + ( mPosition - mPt2 );
+
+        return new CubicControlPoint( outVec, pos, pos );
+    }
+
+    std::ostream& CubicControlPoint::ToStream( std::ostream& stream ) const
+    {
+        std::ostream::sentry opfx(stream);
+        if ( !opfx )
+            return stream;
+
+        return stream;
+        //return ( stream << "CubicControlPoint{ " << mPt1 << ", " << mPt2 << ", " << mPosition << " }" );
+    }
+
+    //--------------------------------------------------------------------------
+    // Spline::ControlPointLength
+    //--------------------------------------------------------------------------
+
+    //CalculateLength---------------------------------------------------------------
+    AggOO::REAL Spline::ControlPointLength::CalculateLength( const ControlPointLength& prevPt, AggOO::REAL delta )
+    {
+        mSegmentLength = mControlPointPtr->Length( *prevPt.mControlPointPtr.get(), delta );
+        mDistance = prevPt.mDistance + mSegmentLength;
+        return mSegmentLength;
+    }
+
+    //UpdateDistance----------------------------------------------------------------
+    AggOO::REAL Spline::ControlPointLength::UpdateDistance( const ControlPointLength& prevPt )
+    {
+        mDistance = prevPt.mDistance + mSegmentLength;
+        return mDistance;
+    }
+
+    //------------------------------------------------------------------------------
+    // Spline
+    //------------------------------------------------------------------------------
+
+    Spline::Spline(void)
+        : mInterpolationDelta( 0.001 )
+    {
+    }
+
+    Spline::~Spline(void)
+    {
+    }
+
+    //MoveTo--------------------------------------------------------------------
+    void Spline::MoveTo( const PointF& pos, bool rel /*= false*/ )
+    {
+        // If this is not the first point, use LineTo:
+        if ( mPoints.size() > 0 )
+            LineTo( pos, rel );
+        else
+            mPoints.push_back( ControlPointLength( new LinearControlPoint( pos ) ) );
+    }
+
+    //LineTo--------------------------------------------------------------------
+    void Spline::LineTo( const PointF& pos, bool rel /*= false*/ )
+    {
+        // If this is the first point, add a starting point at 0,0:
+        if ( mPoints.size() == 0 )
+            MoveTo( PointF( 0, 0 ) );
+
+        // Store the point as an absolute position:
+        PointF absPos = pos;
+        if ( rel )
+            absPos += *mPoints.back().mControlPointPtr;
+
+        // Add the point:
+        mPoints.push_back( ControlPointLength( new LinearControlPoint( absPos ) ) );
+    }
+
+    //Curve3--------------------------------------------------------------------
+    void Spline::Curve3( const PointF& pos, const PointF& ctrlPt, bool rel /*= false*/ )
+    {
+        // If this is the first point, add a starting point at 0,0:
+        if ( mPoints.size() == 0 )
+            MoveTo( PointF( 0, 0 ) );
+
+        // Store the point as an absolute position:
+        PointF absPos = pos;
+        PointF cp     = ctrlPt;
+        if ( rel )
+        {
+            PointF prevPos = *mPoints.back().mControlPointPtr;
+            absPos += prevPos;
+            cp     += prevPos;
+        }
+
+        // Add the point:
+        mPoints.push_back( ControlPointLength( new QuadraticControlPoint( cp, absPos ) ) );
+    }
+
+    //Curve4--------------------------------------------------------------------
+    void Spline::Curve4( const PointF& pos, const PointF& ctrlPt1, const PointF& ctrlPt1, bool rel /*= false*/ )
+    {
+        // If this is the first point, add a starting point at 0,0:
+        if ( mPoints.size() == 0 )
+            MoveTo( PointF( 0, 0 ) );
+
+        // Store the point as an absolute position:
+        PointF absPos = pos;
+        PointF cp1    = ctrlPt1;
+        PointF cp2    = ctrlPt2;
+        if ( rel )
+        {
+            PointF prevPos = *mPoints.back().mControlPointPtr;
+            absPos += prevPos;
+            cp1    += prevPos;
+            cp2    += prevPos;
+        }
+
+        // Add the point:
+        mPoints.push_back( ControlPointLength( new QuadraticControlPoint( cp1, cp2, absPos ) ) );
+    }
+
+
+    //size_t Spline::AddPoint( ControlPoint* pt )
+    //{
+    //    size_t numPts = mPoints.size();
+    //    AggOO::REAL origSplineLength = Length();
+    //    mPoints.push_back( ControlPointLength( pt ) );
+    //    if ( numPts < mPoints.size() && mPoints.size() > 1 )
+    //    {
+    //        mPoints.back().CalculateLength( mPoints.at( mPoints.size() - 2 ), mInterpolationDelta );
+    //    }
+
+    //    return mPoints.size();
+    //}
+
+    //size_t Spline::AddPointAt( ControlPoint* pt, size_t index )
+    //{
+    //    size_t numPts = mPoints.size();
+    //    AggOO::REAL origSplineLength = Length();
+
+    //    // If the index is >= the end of the list, then this is a simple AddPoint
+    //    if ( index >= numPts )
+    //        return AddPoint( pt );
+
+    //    // Add the point
+    //    mPoints.insert( mPoints.begin() + index, ControlPointLength( pt ) );
+
+    //    // Update the segment lengths
+    //    if ( numPts < mPoints.size() && mPoints.size() > 1 )
+    //    {
+    //        if ( index > 0 )
+    //            mPoints.at( index ).CalculateLength( mPoints.at( index - 1 ), mInterpolationDelta );
+    //        if ( index < mPoints.size() - 1 )
+    //            mPoints.at( index + 1 ).CalculateLength( mPoints.at( index ), mInterpolationDelta );
+
+    //        // Update the distance to the remaining points
+    //        for ( int i = index + 2; i < mPoints.size(); i++ )
+    //        {
+    //            if ( i > 0 )
+    //                mPoints.at( i ).UpdateDistance( mPoints.at( i - 1 ) );
+    //        }
+    //    }
+
+    //    return mPoints.size();
+    //}
+
+    size_t Spline::RemovePoint( size_t index )
+    {
+        if ( index < mPoints.size() )
+        {
+            // Remove the point
+            mPoints.erase( mPoints.begin() + index );
+
+            if ( index > 0 && index < mPoints.size() )
+                mPoints.at( index ).CalculateLength( mPoints.at( index - 1 ), mInterpolationDelta );
+
+            // Update the distance of the remaining points
+            for ( int i = index + 1; i < mPoints.size(); i++ )
+            {
+                if ( i > 0 )
+                    mPoints.at( i ).UpdateDistance( mPoints.at( i - 2 ) );
+            }
+        }
+        return mPoints.size();
+    }
+
+    void Spline::Clear()
+    {
+        mPoints.clear();
+    }
+
+    ControlPoint& Spline::GetPoint( size_t index ) const
+    {
+        return *mPoints.at( index ).mControlPointPtr;
+    }
+
+    AggOO::REAL Spline::Length() const
+    {
+        // If the spline is maintained properly, the distance to the final point
+        // should be the length of the spline.
+        if ( mPoints.size() == 0 )
+            return 0;
+        return mPoints.back().mDistance;
+    }
+
+    AggOO::REAL Spline::SegmentLength( size_t segment ) const
+    {
+        int ptIndex = segment + 1;
+        if ( ptIndex < mPoints.size() )
+            return mPoints.at( ptIndex ).SegmentLength();
+        return 0.0;
+    }
+
+    AggOO::PointF Spline::Position( AggOO::REAL ratio ) const
+    {
+        // Calculate the distance to this position by multiplying the ratio by the
+        // total spline length
+        AggOO::REAL dist = Length() * ratio;
+
+        // Find the first point that has a greater distance than "dist":
+        std::vector< ControlPointLength >::const_iterator iter = mPoints.begin();
+        std::vector< ControlPointLength >::const_iterator prevIter = iter;
+        while ( iter->Distance() < dist && iter != mPoints.end() )
+        {
+            prevIter = iter;
+            iter++;
+        }
+
+        // Determine how far along this segment the position is:
+        AggOO::REAL segDist = dist - prevIter->Distance();
+
+        // Ratio along the segment:
+        AggOO::REAL segRatio = segDist / iter->SegmentLength();
+
+        // Calculate the position:
+        return iter->mControlPointPtr->Position( *prevIter->mControlPointPtr.get(), segRatio );
+    }
+
+    //IsClosed------------------------------------------------------------------
+    bool Spline::IsClosed() const
+    {
+        if ( mPoints.size() < 2 || mPoints.at( 0 ).mControlPointPtr->PositionEqual( *mPoints.back().mControlPointPtr ) )
+            return true;
+        return false;
+    }
+
+    //Close---------------------------------------------------------------------
+    size_t Spline::Close()
+    {
+        if ( IsClosed() )
+            return mPoints.size();
+
+        // Add a new point, using the type of the current last point in the
+        // spline, with the same position as the first point
+        return AddPoint( mPoints.back().mControlPointPtr->CreateContinuation( mPoints.at( 0 ).mControlPointPtr->mPosition ) );
+    }
+
+    //makeNodeLinear------------------------------------------------------------
+    void Spline::makeNodeLinear( size_t index )
+    {
+        if ( index < mPoints.size() )
+        {
+            ControlPoint* newPt = mPoints.at( index ).mControlPointPtr->CloneLinear();
+            AddPointAt( newPt, index );
+            RemovePoint( index + 1 );
+        }
+    }
+
+    //MakeLinear----------------------------------------------------------------
+    void Spline::MakeLinear( int index )
+    {
+        if ( index < 0 )
+        {
+            for ( int i = 0; i < mPoints.size(); i++ )
+                makeNodeLinear( i );
+        }
+        else
+        {
+            makeNodeLinear( index );
+        }
+    }
+
+    //makeNodeQuadratic---------------------------------------------------------
+    void Spline::makeNodeQuadratic( size_t index )
+    {
+        if ( index < mPoints.size() )
+        {
+            ControlPoint* newPt = mPoints.at( index ).mControlPointPtr->CloneQuadratic();
+            AddPointAt( newPt, index );
+            RemovePoint( index + 1 );
+        }
+    }
+
+    //MakeQuadratic-------------------------------------------------------------
+    void Spline::MakeQuadratic( int index )
+    {
+        if ( index < 0 )
+        {
+            for ( int i = 0; i < mPoints.size(); i++ )
+                makeNodeQuadratic( i );
+        }
+        else
+        {
+            makeNodeQuadratic( index );
+        }
+    }
+
+    //makeNodeCubic-------------------------------------------------------------
+    void Spline::makeNodeCubic( size_t index )
+    {
+        if ( index < mPoints.size() )
+        {
+            ControlPoint* newPt = mPoints.at( index ).mControlPointPtr->CloneCubic();
+            AddPointAt( newPt, index );
+            RemovePoint( index + 1 );
+        }
+    }
+
+    //MakeCubic-----------------------------------------------------------------
+    void Spline::MakeCubic( int index )
+    {
+        if ( index < 0 )
+        {
+            for ( int i = 0; i < mPoints.size(); i++ )
+                makeNodeCubic( i );
+        }
+        else
+        {
+            makeNodeCubic( index );
+        }
+    }
+
+} // namespace AggOO

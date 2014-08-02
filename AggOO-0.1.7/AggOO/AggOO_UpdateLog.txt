@@ -1,0 +1,257 @@
+
+/*******************************************************************\
+
+This file is part of the AggOO library.  AggOO provides a way to emulate
+GDI+ using Anti-Grain Geometry (http://www.antigrain.com) as the rendering
+backend.
+
+AggOO - Version 0.1
+Copyright (c) 2006 Dratek Software
+
+Anti-Grain Geometry - Version 2.4 
+Copyright (C) 2002-2005 Maxim Shemanarev (McSeem) 
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions 
+are met:
+
+  1. Redistributions of source code must retain the above copyright 
+     notice, this list of conditions and the following disclaimer. 
+
+  2. Redistributions in binary form must reproduce the above copyright
+     notice, this list of conditions and the following disclaimer in 
+     the documentation and/or other materials provided with the 
+     distribution. 
+
+  3. The name of the author may not be used to endorse or promote 
+     products derived from this software without specific prior 
+     written permission. 
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR 
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+POSSIBILITY OF SUCH DAMAGE.
+
+\*******************************************************************/
+
+
+$Id: AggOO_UpdateLog.txt,v 1.8 2007/10/03 14:13:42 dratek Exp $
+
+AggOO_UpdateLog.txt -- List of updates to the AggOO library
+
+August 31, 2007:
+  Added support for rendering Adobe Illustrator .ai files (< version 9, anyway.)
+  This works similar to the SVG rendering.  Not everything is in place, but it
+  can render basic shapes, and use the color information.
+
+July 19, 2007:
+  The SVG vertex extraction is working.  In fact, it is capable of rendering an
+  SVG file using the file's data.  However, using the AGG parser, not all data
+  is utilized (i.e. text is ignored completely and only renders a rectangle.)
+  
+  Building off the SVG stuff, I'm working on adding support for Adobe
+  Illustrator .ai files.  I should almost have this implemented.  I wanted to
+  avoid using AGG commands if possible, but so far I haven't found a way around
+  it.  If it were possible, it would be simple to port the parser to use GDI+
+  (there aren't many .ai viewers out there, and it would be nice to have another
+  without having to rely on AGG.)
+  
+  I would have mentioned this before, but I was still debating the issue.  As of
+  version 2.5, AGG is released under the GPL license.  There is a lot of
+  discussion about this on the mailing list, but not much coming from the
+  author.  My opinion is that a free library should not dictate the application.
+  If a library is free, it should be free for all.  If an author is tired of
+  seeing the library being used in commercial applications while receiving
+  little or no compensation, then they could allow a fork where someone else can
+  continue development of the library, while the author creates a new version of
+  the library (preferrably under a new name, but it doesn't matter) with a more
+  restrictive license.  As it currently stands, AggOO will continue to be built
+  on AGG 2.4.  Because of the Modified BSD license, it is permissable to use it
+  with AGG 2.5, but I am not supporting that as far as any compatibility issues
+  are concerned.  If the AGG license changes (again) to something non-viral, or
+  if there is a fork, I will try to keep up with the changes.  This actually
+  shouldn't be much of an issue.
+
+May 9, 2007:
+  Working on implementing the ability to render an SVG file.  Actually, this is
+  fairly straightforward, as AGG can already do this.  The trick is that I need
+  to be able to get the vertex information from an SVG path.  I've rewritten
+  the AGG helper classes, adding a function to just get the shape data, instead
+  of rendering the paths.
+
+January 26, 2007:
+  Added an option to the gradient brush for a spiral gradient.  Simply specify
+  the gradient style as GradientSpiralSpiral.
+
+November 30, 2006:
+  Should of added this a while ago, but the pen size is properly transformed by
+  the matrix.  For instance, if stroking a shape, the stroke width will be
+  scaled with the shape.  If the shape is scaled differently in the x and y
+  directions, the pen stroke will also be affected.  The drawback to this is
+  that for small scales (it could vary, but I've noticed it with anything less
+  than 0.5,) the stroke doesn't appear at all.  There are tricks to deal with
+  this, but it still isn't an ideal situation.  (I should also note that this
+  is more of a factor when not anti-aliasing.  Anti-aliasing will give better
+  results at smaller scales.)
+  
+November 15, 2006:
+  AGG's image filtering (bilinear, at least) doesn't work properly with plain
+  alpha formats.  Since AggOO uses plain alpha as default (to simulate GDI+,)
+  this is a big problem, as image filtering is used for the DrawImage routines.
+  For now, I'm using the nearest neighbor filter, which works alright with
+  the alpha, but it's not going to give the best results.
+
+November 13, 2006:
+  I added DrawLineStrip to GraphicsExt and AddLineStrip to GraphicsPathExt.
+  These are just simple routines for rendering a series of connected line
+  segments.
+
+November 2, 2006:
+  AggOO is now available at http://www.sourceforge.net/projects/aggoo.  The
+  development version is available through anonymous CVS from the sourceforge
+  site.
+
+October 20, 2006:
+  There was a problem when I did a release build where the line strokes were not
+  visible.  This came down to a problem with the transformation matrix and is
+  taken care of.
+
+October 19, 2006:
+  Fixed the orientation issue with the LinearGradientBrush (matrix order
+  problem.)  I also added some flags for GradientStyle (such as radial, linear,
+  conical, etc.) and GradientInterpolation (linear or step.)  The interpolation
+  required adding the GradientLUT class, as AGG doesn't provide a way to handle
+  step gradients, and this way allowed me to get around some of the difficulty
+  in using templates.  On the downside, I can't use the faster specializations
+  for the rgba8 or gray color types, but that's the price of generalization.
+
+  Added ColorExt and methods for creating random colors.
+
+October 18, 2006:
+  Added AggOOMath.h.  This simply provides some additional math routines not
+  available in AGG, and without needing an external dependancy.
+  
+  The LinearGradientBrush is almost working.  It actually works for horizontal
+  and vertical orientations, but its off when rotated.
+
+October 13, 2006:
+  The TextureBrush is working, but its quite slow.  I'd like to get this working
+  faster, as this is one of the major reasons I started this project...
+
+October 3, 2006:
+  I ran some quick tests on Ubuntu Linux, and everything seems to be working
+  well using X11.  I'm going to cut out the custom application framework that I
+  put together and just use the modified_agg_app class, which adds a few
+  features to the AGG framework.  I've also noticed that I can't (easily) quit
+  the application using the ESCAPE key on platforms other than Windows.  Not a
+  big deal.
+
+October 2, 2006:
+  Just a quick update: The problem I had regarding using the member
+  "PixelFormat" in BitmapData, which has the type "PixelFormat" (note that the
+  spellings are the same...) was just a namespace issue.  If I specified
+  AggOO::PixelFormat where I wanted the type (inside of BitmapData,) everything
+  worked out ok.  (Kinda feel foolish now.)
+
+September 29, 2006:
+  I've hit a bit of a snag.  I was trying to implement the TextureBrush, and
+  when it comes to rendering the image, we need something along the lines of
+  agg::span_image_filter_rgba* type.  The problem is that this type is locked
+  to the pixel format.  AggOO is intended to allow any format to be available,
+  so it does have to make use of templates.  When it tries to compile the code
+  with, say, pixfmt_rgb24, it complains about not being able to use that in the
+  rgba image filter.  It will probably require more abstraction to get this to
+  work properly.  In the meantime, I will have a look at the gradient brushes,
+  although, without the ability to render textures, I'm not going to be able to
+  use this...
+
+September 28, 2006:
+  Bezier curves are now handled.  Cardinal splines are partially implemented.
+  Basically, all of the Draw* and Fill* methods are implemented, except for the
+  text and image drawing routines.
+
+September 27, 2006:
+  The Matrix class is now implemented and working for the Graphics class.  It is
+  still not implemented for the Pen class, but otherwise it seems to be good.
+  
+  Added GraphicsExt and GraphicsPathExt classes.  These are derived from
+  Graphics and GraphicsPath, respectively, and are for methods not in GDI+.
+  Currently, they have methods for rounded-rectangles.
+
+September 21, 2006:
+  Added the Fill* methods to the Graphics class.  This is still limited to the
+  SolidBrush.
+  
+  Added line styles and caps to the Pen class.  Currently, none of the custom
+  styles are implemented.  GDI+ allows separate caps for the start and end
+  points, but AGG doesn't have this option.  AGG also doesn't have a dash_cap
+  option.
+  
+September 20, 2006:
+  I added the Modified BSD license to the AggOO library.  This was added to AGG
+  as of Version 2.4, and I wanted to maintain the same license as McSeem is
+  using.  Basically, as long as you abide by the AGG license, you can use AggOO
+  for anything, commercial or non-commercial.
+
+September 15, 2006:
+  Tip of the Day:
+  Sometimes, the Visual C++ compiler gives lousy error messages that give little
+  clue as to what's wrong.  It can be useful to import the solution into
+  Code::Blocks and try to build it using gcc.  Sometimes, the error message have
+  somewhat more meaning that can help track down the problem.
+  
+  Speaking of Code::Blocks and gcc, the BitmapData class has a member names
+  PixelFormat of type PixelFormat.  The fact that the variable name is the same
+  as the type violates the standards (at least that's what gcc complains about,
+  I haven't looked into it yet.)  Visual C++ is fine with this, and that's the
+  way it is in GDI+.  Since the main goal is to have fairly seamless integration
+  with existing GDI+ code, I'm hesitant to change this.  It might be necessary
+  to use preprocessor conditionals and have it be called PixelFormat if using
+  Visual C++, and call it pixelFormat or something if using a different
+  compiler.
+
+September 8, 2006:
+  The Color, Brush, and SolidBrush classes are implemented.  The Image and
+  Bitmap classes are at a stage where they should be usable for my current
+  needs.  I've listed the GDI+ functions that are not yet supported, so maybe
+  one day they will be finished. Actually, I do want to get something working
+  for the Bitmap::LockBits/UnlockBits routines yet.  Right now, locking just
+  returns a pointer to the pixel data, so its not quite ready.
+  
+September 7, 2006:
+  There's still a LOT more to do with the demo framework, but it's coming.  I
+  have made the internal buffer for the application use a rendering_buffer from
+  agg.  Its starting to look like I'd have been ahead just using the agg frame-
+  work, with some modifications to set the raw pixel data.
+  
+  I've added the PixelFormat values.  For now, I am testing with the GDI+ demo,
+  so I can weed out compatibility issues early on.  I think it's important to
+  keep these things protected by the namespace, but GDI+ uses #define to define
+  the pixel formats.  This causes problems when using AggOO with GDI+, but as
+  long as AggOO is included first, the problems are minimal.  Also, it is
+  important to use the GDI+ values instead of, say, AggOO::PixelFormat32bppARGB.
+  The values in AggOO are the same as in GDI+, so that will work alright.  Maybe
+  it would have been better to just use #defines...
+
+September 1, 2006:
+  I changed the project name to AggOO (AGG Object-Oriented.)  Sounds more like
+  an open-source name than AggDraw.
+
+August 31, 2006:
+  The demo framework works ok.  Right now, I have to get the HDC from the app,
+  which kind of defeats the idea of a platform-independent framework.  What I
+  need to implement is a pixel map class that can take a raw pixel buffer, and
+  convert it to the display format.  AGG has something similar set up in its
+  demos.
+  
+  Began work on the AggDraw library.  For starters, I'm working on the framework
+  for the demo apps.  It should work similar to the AGG demos, where the app
+  class can be sub-classed, then the main routine just initializes and runs the
+  app.  The catch is it needs to work for both GDI+ and AGG.
