@@ -122,16 +122,6 @@
     <Compile Include="03_TextureMapping\TextureMapping1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenTk.WinForm\OpenTk.WinForm.csproj">
-      <Project>{93D4A59A-D626-41C5-AD66-B8472B7BBD71}</Project>
-      <Name>OpenTk.WinForm</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OpenTkEss\OpenTkEss.csproj">
-      <Project>{D9E24F68-37FA-4C11-AC17-0C351681908F}</Project>
-      <Name>OpenTkEss</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -148,7 +138,16 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\OpenTk.CoreGraphics\OpenTk.CoreGraphics.csproj">
+      <Project>{D9E24F68-37FA-4C11-AC17-0C351681908F}</Project>
+      <Name>OpenTk.CoreGraphics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OpenTk.Platforms\OpenTk.Platforms.csproj">
+      <Project>{93D4A59A-D626-41C5-AD66-B8472B7BBD71}</Project>
+      <Name>OpenTk.Platforms</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

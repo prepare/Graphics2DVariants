@@ -8,8 +8,8 @@
     <ProjectGuid>{93D4A59A-D626-41C5-AD66-B8472B7BBD71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenTk.WinForm</RootNamespace>
-    <AssemblyName>OpenTk.WinForm</AssemblyName>
+    <RootNamespace>OpenTk.Platforms</RootNamespace>
+    <AssemblyName>OpenTk.Platforms</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -135,9 +135,9 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OpenTkEss\OpenTkEss.csproj">
+    <ProjectReference Include="..\OpenTk.CoreGraphics\OpenTk.CoreGraphics.csproj">
       <Project>{D9E24F68-37FA-4C11-AC17-0C351681908F}</Project>
-      <Name>OpenTkEss</Name>
+      <Name>OpenTk.CoreGraphics</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
