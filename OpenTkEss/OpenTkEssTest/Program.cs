@@ -16,7 +16,7 @@ namespace OpenTkEssTest
         {
 
             OpenTK.Toolkit.Init();
-            int appcode = 12;
+            int appcode = 8;
 
             switch (appcode)
             {

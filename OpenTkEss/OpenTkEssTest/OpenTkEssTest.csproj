@@ -97,18 +97,6 @@
     <Compile Include="06_GameWindows\GameWindowMsaa.cs" />
     <Compile Include="06_GameWindows\GameWindowSimple.cs" />
     <Compile Include="06_GameWindows\GameWindowThreaded.cs" />
-    <Compile Include="GLControlBase\CarbonGLControl.cs" />
-    <Compile Include="GLControlBase\DummyGLControl.cs" />
-    <Compile Include="GLControlBase\GLControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="GLControlBase\GLControl.Designer.cs">
-      <DependentUpon>GLControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GLControlBase\GLControlFactory.cs" />
-    <Compile Include="GLControlBase\IGLControl.cs" />
-    <Compile Include="GLControlBase\WinGLControl.cs" />
-    <Compile Include="GLControlBase\X11GLControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shapes\Base\DrawableShape.cs" />
