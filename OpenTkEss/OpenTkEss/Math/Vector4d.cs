@@ -24,7 +24,7 @@ SOFTWARE.
 
 using System;
 using System.Runtime.InteropServices;
-using System.Xml.Serialization;
+//using System.Xml.Serialization;
 
 namespace OpenTK
 {

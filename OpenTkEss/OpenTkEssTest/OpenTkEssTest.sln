@@ -10,19 +10,33 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Documentation|Any CPU = Documentation|Any CPU
+		Nsis|Any CPU = Nsis|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Documentation|Any CPU.Build.0 = Debug|Any CPU
+		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Nsis|Any CPU.ActiveCfg = Release|Any CPU
+		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Nsis|Any CPU.Build.0 = Release|Any CPU
 		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{910824A1-3F6D-4B26-B1B0-78ABC0195500}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Documentation|Any CPU.Build.0 = Debug|Any CPU
+		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Nsis|Any CPU.ActiveCfg = Release|Any CPU
+		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Nsis|Any CPU.Build.0 = Release|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Documentation|Any CPU.Build.0 = Debug|Any CPU
+		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Nsis|Any CPU.ActiveCfg = Release|Any CPU
+		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Nsis|Any CPU.Build.0 = Release|Any CPU
 		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

@@ -30,7 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
- 
+
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -82,7 +82,7 @@ namespace OpenTkEssTest
 
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();
-             
+
         }
 
         #endregion
@@ -132,7 +132,7 @@ namespace OpenTkEssTest
             //Matrix4 lookat = Matrix4.LookAt(0, 0, 16, 0, 0, 0, 0, 1, 0);
             //GL.MatrixMode(MatrixMode.Modelview);
             //GL.LoadMatrix(ref lookat);
-            float rtri = 0;
+            float rotate = 0;
             //GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             //GL.CallLists(num_lists, ListNameType.Int, lists);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -140,13 +140,12 @@ namespace OpenTkEssTest
             GL.LoadIdentity();
             GL.Translate(-1.5f, 0f, -6f);
 
-
             //GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);		// Clear the Screen and the Depth Buffer
             //GL.glMatrixMode(GL.GL_MODELVIEW);				// Modelview Matrix
             // GL.glLoadIdentity();							// reset the current modelview matrix
             // GL.glTranslatef(-1.5f, 0.0f, -6.0f);				// move 1.5 Units left and 6 Units into the screen
             // GL.glRotatef(rtri, 0.0f, 1.0f, 0.0f);				// rotate the triangle on the Y-axis
-            rtri += 0.2f;
+            rotate += 0.2f;
             // increase the rotation variable
 
             GL.Begin(BeginMode.Triangles);
@@ -154,29 +153,48 @@ namespace OpenTkEssTest
             GL.Color3(0f, 1, 0); GL.Vertex3(-1f, -1f, 0.0f);
             GL.Color3(0f, 0, 1); GL.Vertex3(1f, -1f, 0.0f);
             GL.End();
-            
+
             GL.LoadIdentity();
+            //rotate += 50f;
             GL.Translate(1.5f, 0.0f, -6.0f);
-            GL.Rotate(rtri, 1.0f, 0.0f, 0.0f);
+            //GL.Rotate(rotate, 1.0f, 0.0f, 0.0f);
             GL.Color3(0.5f, 0.5f, 1.0f);
 
-            GL.Begin(BeginMode.Quads);
-            GL.Vertex3(-1f, 1, 0);
-            GL.Vertex3(1f, 1, 0);
-            GL.Vertex3(1f, -1, 0);
-            GL.Vertex3(-1f, -1, 0);
-            GL.End();
+            //-------------------------------
+            DrawQuads(-1, 1, .5f, .5f);
+
+            //-------------------------------
+            float cx = -1;
+            float cy = 0;
+            for (int i = 0; i < 10; i++)
+            {
+                DrawQuads(cx, cy, .5f, .5f);
+                cx += 2;
+                cy += 2;
+            }
+
 
             SwapBuffers();
         }
-
         #endregion
 
-        #region public static void Main()
+        static void DrawQuads(float x, float y, float w, float h)
+        {
+            //clock-wise 
+            GL.Begin(BeginMode.Triangles);
 
-        
+            GL.Vertex3(x, y, 0);//1
+            GL.Vertex3(x + w, y, 0);//2
+            GL.Vertex3(x + w, y - h, 0);//3
 
-        #endregion
+            GL.Vertex3(x + w, y - h, 0);//3
+            GL.Vertex3(x, y - h, 0);//4
+            GL.Vertex3(x, y, 0);//1
+
+            GL.End();
+        }
+
+
     }
 
 

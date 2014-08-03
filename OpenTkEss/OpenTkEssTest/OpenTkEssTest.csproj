@@ -57,9 +57,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Demo1_Basic\T01_Basic.cs" />
-    <Compile Include="Demo1_Basic\DisplayList.cs" />
-    <Compile Include="Demo3_TextureMatrix\TextureMatrix.cs" />
+    <Compile Include="01_Basic\01_Basic.cs" />
+    <Compile Include="01_Basic\02_DisplayList.cs" />
+    <Compile Include="02_VertextBuffer\VBODynamic.cs" />
+    <Compile Include="02_VertextBuffer\VBOStatic.cs" />
+    <Compile Include="03_TextureMapping\TextureMatrix.cs" />
     <Compile Include="GLControlBase\CarbonGLControl.cs" />
     <Compile Include="GLControlBase\DummyGLControl.cs" />
     <Compile Include="GLControlBase\GLControl.cs">
@@ -74,6 +76,29 @@
     <Compile Include="GLControlBase\X11GLControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shapes\Base\DrawableShape.cs" />
+    <Compile Include="Shapes\Base\VertexStructs.cs" />
+    <Compile Include="Shapes\Capsule.cs" />
+    <Compile Include="Shapes\ChamferCube.cs" />
+    <Compile Include="Shapes\Helpers\Chunk.cs" />
+    <Compile Include="Shapes\Helpers\MengerCube.cs" />
+    <Compile Include="Shapes\Helpers\TetrahedronFace.cs" />
+    <Compile Include="Shapes\Helpers\VboShape.cs" />
+    <Compile Include="Shapes\KochTetrahedron.cs" />
+    <Compile Include="Shapes\MengerSponge.cs" />
+    <Compile Include="Shapes\Old\Cube.cs" />
+    <Compile Include="Shapes\Old\IsoSphere.cs" />
+    <Compile Include="Shapes\Old\Plane.cs" />
+    <Compile Include="Shapes\Old\Shape.cs" />
+    <Compile Include="Shapes\Old\SierpinskiTetrahedron.cs" />
+    <Compile Include="Shapes\SlicedHose.cs" />
+    <Compile Include="Shapes\SlicedSphere.cs" />
+    <Compile Include="Shapes\TorusKnot.cs" />
+    <Compile Include="Shapes\VertexPositionColor.cs" />
+    <Compile Include="Utilities\LoaderDDS.cs" />
+    <Compile Include="Utilities\LoaderGDI.cs" />
+    <Compile Include="Utilities\LoaderStatics.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -94,7 +119,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Demo2_TextureMapping1\TextureMapping1.cs" />
+    <Compile Include="03_TextureMapping\TextureMapping1.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OpenTkEss\OpenTkEss.csproj">
@@ -119,6 +144,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

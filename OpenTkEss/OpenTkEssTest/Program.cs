@@ -14,7 +14,7 @@ namespace OpenTkEssTest
         [STAThread]
         static void Main()
         {
-            int appcode =4;
+            int appcode = 6;
 
             switch (appcode)
             {
@@ -27,8 +27,8 @@ namespace OpenTkEssTest
                             //ExampleAttribute info = ((ExampleAttribute)typeof(Textures).GetCustomAttributes(false)[0]);
                             // example.Title = String.Format("OpenTK | {0} {1}: {2}", info.Category, info.Difficulty, info.Title);
                             example.Run(30.0, 0.0);
-                        } 
-                    }break;
+                        }
+                    } break;
                 case 2:
                     {
                         //texture matrix
@@ -39,7 +39,7 @@ namespace OpenTkEssTest
                             //example.Title = String.Format("OpenTK | {0} {1}: {2}", info.Category, info.Difficulty, info.Title);
                             example.Run(30.0, 0.0);
                         }
-                    }break;
+                    } break;
                 case 3:
                     {
                         using (T07_Display_Lists_Flower example = new T07_Display_Lists_Flower())
@@ -47,18 +47,38 @@ namespace OpenTkEssTest
                             //Utilities.SetWindowTitle(example);
                             example.Run(30.0, 0.0);
                         }
-                    }break;
+                    } break;
                 case 4:
-                    {   using (T01_Basic example = new T01_Basic())
+                    {
+                        using (T01_Basic example = new T01_Basic())
                         {
                             //Utilities.SetWindowTitle(example);
                             example.Run(30.0, 0.0);
-                        } 
+                        }
 
+                    } break;
+                case 5:
+                    {
+                        using (T08_VBO example = new T08_VBO())
+                        {
+                            //Utilities.SetWindowTitle(example);
+                            example.Run(30.0, 0.0);
+                        }
+                    } break;
+                case 6:
+                    {
+                        // The 'using' idiom guarantees proper resource cleanup.
+                        // We request 30 UpdateFrame events per second, and unlimited
+                        // RenderFrame events (as fast as the computer can handle).
+                        using (T09_VBO_Dynamic example = new T09_VBO_Dynamic())
+                        {
+                            //Utilities.SetWindowTitle(example);
+                            example.Run(60.0, 0.0);
+                        }
                     }break;
-                      
 
-            } 
+
+            }
         }
     }
 }
