@@ -16,10 +16,8 @@ namespace OpenTkEssTest
         {
 
             OpenTK.Toolkit.Init();
+            int appcode = 12;
 
-
-
-            int appcode = 8;
             switch (appcode)
             {
 
@@ -93,8 +91,55 @@ namespace OpenTkEssTest
                         Application.EnableVisualStyles();
                         FormTestWinGLControl form = new FormTestWinGLControl();
                         Application.Run(form);
-                    } break;
 
+                    } break;
+                case 9:
+                    {
+                        Application.EnableVisualStyles();
+                        var form = new GameLoopForm();
+                        Application.Run(form);
+
+                    } break;
+                case 10:
+                    {
+                        Application.EnableVisualStyles();
+                        var form = new SimpleForm();
+                        Application.Run(form);
+
+                    } break;
+                case 11:
+                    {
+                        Application.EnableVisualStyles();
+                        var form = new MultipleGLControlsForm();
+                        Application.Run(form);
+                    } break;
+                case 12:
+                    {
+                        using (var example = new Examples.FullscreenAntialias())
+                        {
+                            // Get the title and category  of this example using reflection.
+                            //Utilities.SetWindowTitle(example);
+                            example.Run(30.0, 0.0);
+                        }
+                    } break;
+                case 13:
+                    {
+                        using (var example = new Examples.Tutorial.SimpleWindow())
+                        {
+                            // Get the title and category  of this example using reflection.
+                            //Utilities.SetWindowTitle(example);
+                            example.Run(30.0, 0.0);
+                        }
+                    } break;
+                case 14:
+                    {
+                        using (var example = new Examples.Tutorial.ThreadedRendering())
+                        {
+                            // Get the title and category  of this example using reflection.
+                            //Utilities.SetWindowTitle(example);
+                            example.Run();
+                        }
+                    }break;
             }
         }
     }
