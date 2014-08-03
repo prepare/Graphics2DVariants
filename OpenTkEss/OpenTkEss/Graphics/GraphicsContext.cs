@@ -268,7 +268,7 @@ namespace OpenTK.Graphics
 
         #region public static IGraphicsContext CurrentContext
 
-        internal delegate ContextHandle GetCurrentContextDelegate();
+        public delegate ContextHandle GetCurrentContextDelegate();
         internal static GetCurrentContextDelegate GetCurrentContext = delegate
         {
             // Note: this is a slow, generic fallback for use with DummyGLContext.

@@ -154,7 +154,7 @@ namespace OpenTK.Platform.Windows
         GraphicsMode SelectGraphicsModeARB(ColorDepth color, int depth, int stencil, int samples, ColorDepth accum,
             int buffers, bool stereo)
         {
-            using (INativeWindow native_window = new NativeWindow())
+            using (INativeWindow2 native_window = new NativeWindow())
             using (IGraphicsContext context = new GraphicsContext(new GraphicsMode(new ColorFormat(), 0, 0, 0, new ColorFormat(), 2, false), native_window.WindowInfo, 1, 0, GraphicsContextFlags.Default))
             {
                 WinWindowInfo window = (WinWindowInfo)native_window.WindowInfo;

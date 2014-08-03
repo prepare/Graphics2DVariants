@@ -42,7 +42,7 @@ namespace OpenTK.Platform.Windows
     /// Drives GameWindow on Windows.
     /// This class supports OpenTK, and is not intended for use by OpenTK programs.
     /// </summary>
-    internal sealed class WinGLNative : INativeWindow, IInputDriver
+    internal sealed class WinGLNative : INativeWindow2, IInputDriver
     {
         #region Fields
 

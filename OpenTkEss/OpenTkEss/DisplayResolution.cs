@@ -28,7 +28,7 @@ namespace OpenTK
         #region public DisplayResolution(int width, int height, int bitsPerPixel, float refreshRate)
 
         // Creates a new DisplayResolution object for the primary DisplayDevice.
-        internal DisplayResolution(int x, int y, int width, int height, int bitsPerPixel, float refreshRate)
+        public DisplayResolution(int x, int y, int width, int height, int bitsPerPixel, float refreshRate)
         {
             // Refresh rate may be zero, since this information may not be available on some platforms.
             if (width <= 0) throw new ArgumentOutOfRangeException("width", "Must be greater than zero.");
@@ -200,7 +200,7 @@ namespace OpenTK
         /// <param name="left">The first instance.</param>
         /// <param name="right">The second instance.</param>
         /// <returns>True, if left equals right; false otherwise.</returns>
-        public static bool operator== (DisplayResolution left, DisplayResolution right)
+        public static bool operator ==(DisplayResolution left, DisplayResolution right)
         {
             if (((object)left) == null && ((object)right) == null)
                 return true;

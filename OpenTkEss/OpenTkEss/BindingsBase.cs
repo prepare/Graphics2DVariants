@@ -125,7 +125,7 @@ namespace OpenTK
 
         #region LoadEntryPoints
 
-        internal void LoadEntryPoints()
+        public void LoadEntryPoints()
         {
             // Using reflection is more than 3 times faster than directly loading delegates on the first
             // run, probably due to code generation overhead. Subsequent runs are faster with direct loading

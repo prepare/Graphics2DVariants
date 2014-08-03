@@ -29,40 +29,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenTK
+using OpenTK.Graphics;
+
+namespace OpenTK.Platform
 {
-    /// <summary>
-    /// Provides static methods to manage an OpenTK application.
-    /// </summary>
-    public sealed class Toolkit
+    public interface INativeWindow : IDisposable
     {
-        #region Constructors
 
-        Toolkit() { }
-
-        #endregion
-
-        #region Public Members
-
-        /// <summary>
-        /// Initializes OpenTK. This method is necessary only if you are using OpenTK
-        /// alongside a different windowing toolkit (e.g. GTK#) and should be the very
-        /// first method called by your application (i.e. calling this method should be
-        /// the very first statement executed by the "Main" method).
-        /// </summary>
-        /// <remarks>
-        /// Some windowing toolkits do not configure the underlying platform
-        /// correctly or configure it in a way that is incompatible with OpenTK.
-        /// Calling this method first ensures that OpenTK is given the chance to
-        /// initialize itself and configure the platform correctly.
-        /// </remarks>
-        public static void Init()
-        {
-            // The actual initialization takes place in the platform-specific factory
-            // constructors.
-            new Platform.Factory();
-        }
-
-        #endregion
     }
 }

@@ -33,12 +33,12 @@ using OpenTK.Platform;
 namespace OpenTK.Graphics
 {
     // Provides the foundation for all IGraphicsContext implementations.
-    abstract class GraphicsContextBase : IGraphicsContext, IGraphicsContextInternal
+    public abstract class GraphicsContextBase : IGraphicsContext, IGraphicsContextInternal
     {
         #region Fields
 
         bool disposed;
-        
+
         protected ContextHandle Handle;
         protected GraphicsMode Mode;
 
@@ -57,7 +57,7 @@ namespace OpenTK.Graphics
             get { return disposed; }
             protected set { disposed = value; }
         }
-        
+
         public abstract bool VSync { get; set; }
 
         public virtual void Update(IWindowInfo window) { }

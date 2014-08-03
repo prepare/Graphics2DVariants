@@ -38,7 +38,7 @@ namespace OpenTK
     /// <summary>
     /// Instances of this class implement the <see cref="OpenTK.INativeWindow"/> interface on the current platform.
     /// </summary>
-    public class NativeWindow : INativeWindow
+    public class NativeWindow : INativeWindow2
     {
         #region --- Fields ---
 
@@ -46,7 +46,7 @@ namespace OpenTK
 
         private readonly DisplayDevice device;
 
-        private readonly INativeWindow implementation;
+        private readonly INativeWindow2 implementation;
 
         private bool disposed, events;
 
@@ -100,7 +100,7 @@ namespace OpenTK
             this.options = options;
             this.device = device;
 
-            implementation = Factory.Default.CreateNativeWindow(x, y, width, height, title, mode, options, this.device);
+            implementation = (INativeWindow2)Factory.Default.CreateNativeWindow(x, y, width, height, title, mode, options, this.device);
 
             if ((options & GameWindowFlags.Fullscreen) != 0)
             {
@@ -337,7 +337,7 @@ namespace OpenTK
                 return implementation.InputDriver;
             }
         }
-
+        
         #endregion
 
         #region Location
@@ -584,7 +584,7 @@ namespace OpenTK
         /// Occurs whenever the mouse cursor enters the window <see cref="Bounds"/>.
         /// </summary>
         public event EventHandler<EventArgs> MouseEnter;
-        
+
         /// <summary>
         /// Occurs whenever the mouse cursor leaves the window <see cref="Bounds"/>.
         /// </summary>

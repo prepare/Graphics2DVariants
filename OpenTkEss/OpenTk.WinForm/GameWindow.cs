@@ -92,6 +92,11 @@ namespace OpenTK
 
         #endregion
 
+        static GameWindow()
+        {
+            Toolkit.Init();
+        }
+
         #region --- Contructors ---
 
         #region public GameWindow()
@@ -615,7 +620,12 @@ namespace OpenTK
         /// </summary>
         public MouseDevice Mouse
         {
-            get { return InputDriver.Mouse.Count > 0 ? InputDriver.Mouse[0] : null; }
+
+            get
+            {
+
+                return InputDriver.Mouse.Count > 0 ? InputDriver.Mouse[0] : null;
+            }
         }
 
         #endregion

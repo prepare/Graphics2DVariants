@@ -30,12 +30,19 @@ using System.Collections.Generic;
 using System.Text;
 
 using OpenTK.Graphics;
-
+ 
 namespace OpenTK.Platform
 {
-    interface IPlatformFactory
+   
+    public interface IPlatformFactory
     {
-        INativeWindow CreateNativeWindow(int x, int y, int width, int height, string title, GraphicsMode mode, GameWindowFlags options, DisplayDevice device);
+        INativeWindow CreateNativeWindow(int x,
+            int y, int width,
+            int height,
+            string title,
+            GraphicsMode mode,
+            GameWindowFlags options,
+            DisplayDevice device);
 
         IDisplayDeviceDriver CreateDisplayDeviceDriver();
 
@@ -44,9 +51,9 @@ namespace OpenTK.Platform
         IGraphicsContext CreateGLContext(ContextHandle handle, IWindowInfo window, IGraphicsContext shareContext, bool directRendering, int major, int minor, GraphicsContextFlags flags);
 
         GraphicsContext.GetCurrentContextDelegate CreateGetCurrentGraphicsContext();
-        
+
         IGraphicsMode CreateGraphicsMode();
-        
-        OpenTK.Input.IKeyboardDriver CreateKeyboardDriver();
+
+        //OpenTK.Input.IKeyboardDriver CreateKeyboardDriver();
     }
 }

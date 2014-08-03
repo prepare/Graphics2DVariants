@@ -53,7 +53,7 @@ namespace OpenTK
             available_displays_readonly = available_displays.AsReadOnly();
         }
 
-        internal DisplayDevice()
+        public DisplayDevice()
         {
             lock (display_lock)
             {
@@ -63,7 +63,7 @@ namespace OpenTK
             available_resolutions_readonly = available_resolutions.AsReadOnly();
         }
 
-        internal DisplayDevice(DisplayResolution currentResolution, bool primary,
+        public DisplayDevice(DisplayResolution currentResolution, bool primary,
             IEnumerable<DisplayResolution> availableResolutions, Rectangle bounds)
             : this()
         {
@@ -89,7 +89,7 @@ namespace OpenTK
         public Rectangle Bounds
         {
             get { return bounds; }
-            internal set
+            set
             {
                 bounds = value;
                 current_resolution.Height = bounds.Height;
@@ -119,7 +119,7 @@ namespace OpenTK
         public int BitsPerPixel
         {
             get { return current_resolution.BitsPerPixel; }
-            internal set { current_resolution.BitsPerPixel = value; }
+            set { current_resolution.BitsPerPixel = value; }
         }
 
         #endregion
@@ -132,7 +132,7 @@ namespace OpenTK
         public float RefreshRate
         {
             get { return current_resolution.RefreshRate; }
-            internal set { current_resolution.RefreshRate = value; }
+            set { current_resolution.RefreshRate = value; }
         }
 
         #endregion
@@ -143,7 +143,7 @@ namespace OpenTK
         public bool IsPrimary
         {
             get { return primary; }
-            internal set
+            set
             {
                 if (value && primary_display != null && primary_display != this)
                     primary_display.IsPrimary = false;
@@ -199,7 +199,7 @@ namespace OpenTK
         public IList<DisplayResolution> AvailableResolutions
         {
             get { return available_resolutions_readonly; }
-            internal set
+            set
             {
                 available_resolutions = (List<DisplayResolution>)value;
                 available_resolutions_readonly = available_resolutions.AsReadOnly();
@@ -472,7 +472,7 @@ namespace OpenTK
                 form.Visible = false;
         }
 
-        #region IDisposable Members
+    #region IDisposable Members
 
         public void Dispose()
         {
@@ -480,7 +480,7 @@ namespace OpenTK
                 form.Dispose();
         }
 
-        #endregion
+    #endregion
     }
 #endif
     #endregion

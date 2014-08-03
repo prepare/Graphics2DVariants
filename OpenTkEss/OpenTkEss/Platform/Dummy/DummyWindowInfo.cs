@@ -4,7 +4,7 @@ using System.Text;
 
 namespace OpenTK.Platform.Dummy
 {
-    class DummyWindowInfo : IWindowInfo
+   public  class DummyWindowInfo : IWindowInfo
     {
         #region IDisposable Members
 
