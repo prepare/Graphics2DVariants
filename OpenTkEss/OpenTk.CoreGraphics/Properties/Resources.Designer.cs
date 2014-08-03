@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace OpenTk.CoreGraphics.Properties {
+namespace OpenTK.CoreGraphics.Properties {
     using System;
     
     

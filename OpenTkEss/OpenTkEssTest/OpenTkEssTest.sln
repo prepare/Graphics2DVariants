@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTk.CoreGraphics", "..\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTk.Platforms", "..\OpenTk.Platforms\OpenTk.Platforms.csproj", "{93D4A59A-D626-41C5-AD66-B8472B7BBD71}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTk.GLControl", "..\OpenTk.GLControl\OpenTk.GLControl.csproj", "{36A8F6FB-1536-435B-8386-284206493380}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{93D4A59A-D626-41C5-AD66-B8472B7BBD71}.Nsis|Any CPU.Build.0 = Release|Any CPU
 		{93D4A59A-D626-41C5-AD66-B8472B7BBD71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93D4A59A-D626-41C5-AD66-B8472B7BBD71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Documentation|Any CPU.Build.0 = Debug|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Nsis|Any CPU.ActiveCfg = Release|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Nsis|Any CPU.Build.0 = Release|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36A8F6FB-1536-435B-8386-284206493380}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

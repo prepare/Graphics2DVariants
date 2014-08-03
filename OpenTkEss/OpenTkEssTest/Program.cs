@@ -14,12 +14,12 @@ namespace OpenTkEssTest
         [STAThread]
         static void Main()
         {
-         
+
             OpenTK.Toolkit.Init();
 
 
 
-            int appcode = 7;
+            int appcode = 8;
             switch (appcode)
             {
 
@@ -79,7 +79,7 @@ namespace OpenTkEssTest
                             //Utilities.SetWindowTitle(example);
                             example.Run(60.0, 0.0);
                         }
-                    }break;
+                    } break;
                 case 7:
                     {
                         using (StencilCSG example = new StencilCSG())
@@ -87,7 +87,13 @@ namespace OpenTkEssTest
                             //Utilities.SetWindowTitle(example);
                             example.Run(30.0, 0.0);
                         }
-                    }break;
+                    } break;
+                case 8:
+                    {
+                        Application.EnableVisualStyles();
+                        FormTestWinGLControl form = new FormTestWinGLControl();
+                        Application.Run(form);
+                    } break;
 
             }
         }
