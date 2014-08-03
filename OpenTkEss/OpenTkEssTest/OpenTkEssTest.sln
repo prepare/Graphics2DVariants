@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTkEssTest", "OpenTkEssT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTkEss", "..\OpenTkEss\OpenTkEss.csproj", "{D9E24F68-37FA-4C11-AC17-0C351681908F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lesson2_01", "..\OpenGL_Nehe\cs\Lesson2\Lesson2_01.csproj", "{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,14 +29,6 @@ Global
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Nsis|Any CPU.Build.0 = Release|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9E24F68-37FA-4C11-AC17-0C351681908F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Documentation|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Documentation|Any CPU.Build.0 = Debug|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Nsis|Any CPU.ActiveCfg = Release|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Nsis|Any CPU.Build.0 = Release|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D22CFC3-A8DE-46B3-B692-1DFAE625F582}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
