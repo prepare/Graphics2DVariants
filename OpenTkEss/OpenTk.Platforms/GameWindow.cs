@@ -92,11 +92,7 @@ namespace OpenTK
 
         #endregion
 
-        static GameWindow()
-        {
-            Toolkit.Init();
-        }
-
+        
         #region --- Contructors ---
 
         #region public GameWindow()

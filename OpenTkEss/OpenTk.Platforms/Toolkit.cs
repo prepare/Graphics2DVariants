@@ -34,7 +34,7 @@ namespace OpenTK
     /// <summary>
     /// Provides static methods to manage an OpenTK application.
     /// </summary>
-    static class Toolkit
+    public static class Toolkit
     {
         #region Constructors
 

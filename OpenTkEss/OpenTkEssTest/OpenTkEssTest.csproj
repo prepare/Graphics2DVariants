@@ -62,6 +62,7 @@
     <Compile Include="02_VertextBuffer\VBODynamic.cs" />
     <Compile Include="02_VertextBuffer\VBOStatic.cs" />
     <Compile Include="03_TextureMapping\TextureMatrix.cs" />
+    <Compile Include="04_StencilCSG\StencilCSG.cs" />
     <Compile Include="GLControlBase\CarbonGLControl.cs" />
     <Compile Include="GLControlBase\DummyGLControl.cs" />
     <Compile Include="GLControlBase\GLControl.cs">
