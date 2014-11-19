@@ -94,7 +94,7 @@ hb_ft_get_glyph_h_advance (hb_font_t *font HB_UNUSED,
   if (unlikely (FT_Get_Advance (ft_face, glyph, load_flags, &v)))
     return 0;
 
-  return v >> 10;
+  return (v + (1<<9)) >> 10;
 }
 
 static hb_position_t
@@ -112,7 +112,7 @@ hb_ft_get_glyph_v_advance (hb_font_t *font HB_UNUSED,
 
   /* Note: FreeType's vertical metrics grows downward while other FreeType coordinates
    * have a Y growing upward.  Hence the extra negation. */
-  return -v >> 10;
+  return (-v + (1<<9)) >> 10;
 }
 
 static hb_bool_t
@@ -136,7 +136,7 @@ hb_ft_get_glyph_v_origin (hb_font_t *font HB_UNUSED,
 			  void *user_data HB_UNUSED)
 {
   FT_Face ft_face = (FT_Face) font_data;
-  int load_flags = FT_LOAD_DEFAULT;
+  int load_flags = FT_LOAD_DEFAULT | FT_LOAD_NO_HINTING;
 
   if (unlikely (FT_Load_Glyph (ft_face, glyph, load_flags)))
     return false;
@@ -185,7 +185,7 @@ hb_ft_get_glyph_extents (hb_font_t *font HB_UNUSED,
 			 void *user_data HB_UNUSED)
 {
   FT_Face ft_face = (FT_Face) font_data;
-  int load_flags = FT_LOAD_DEFAULT;
+  int load_flags = FT_LOAD_DEFAULT | FT_LOAD_NO_HINTING;
 
   if (unlikely (FT_Load_Glyph (ft_face, glyph, load_flags)))
     return false;
@@ -418,8 +418,8 @@ hb_ft_font_create (FT_Face           ft_face,
 		     _hb_ft_get_font_funcs (),
 		     ft_face, (hb_destroy_func_t) _do_nothing);
   hb_font_set_scale (font,
-		     ((uint64_t) ft_face->size->metrics.x_scale * (uint64_t) ft_face->units_per_EM) >> 16,
-		     ((uint64_t) ft_face->size->metrics.y_scale * (uint64_t) ft_face->units_per_EM) >> 16);
+		     (int) (((uint64_t) ft_face->size->metrics.x_scale * (uint64_t) ft_face->units_per_EM + (1<<15)) >> 16),
+		     (int) (((uint64_t) ft_face->size->metrics.y_scale * (uint64_t) ft_face->units_per_EM + (1<<15)) >> 16));
   hb_font_set_ppem (font,
 		    ft_face->size->metrics.x_ppem,
 		    ft_face->size->metrics.y_ppem);
@@ -455,7 +455,7 @@ retry:
       goto retry;
     }
 
-#ifdef HAVE_ATEXIT
+#ifdef HB_USE_ATEXIT
     atexit (free_ft_library); /* First person registers atexit() callback. */
 #endif
   }

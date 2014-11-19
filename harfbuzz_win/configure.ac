@@ -1,6 +1,6 @@
 AC_PREREQ([2.64])
 AC_INIT([HarfBuzz],
-        [0.9.22],
+        [0.9.35],
         [http://bugs.freedesktop.org/enter_bug.cgi?product=harfbuzz],
         [harfbuzz],
         [http://harfbuzz.org/])
@@ -9,7 +9,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/harfbuzz.pc.in])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([1.11.1 gnits dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability])
+AM_INIT_AUTOMAKE([1.11.1 gnits tar-pax dist-bzip2 no-dist-gzip -Wall no-define color-tests -Wno-portability])
+AM_CONDITIONAL(AUTOMAKE_OLDER_THAN_1_13, test $am__api_version = 1.11 -o $am__api_version = 1.12)
 AM_SILENT_RULES([yes])
 
 # Initialize libtool
@@ -22,6 +23,8 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG([0.20])
+AM_MISSING_PROG([RAGEL], [ragel])
+AM_MISSING_PROG([GIT], [git])
 
 # Version
 m4_define(hb_version_triplet,m4_split(AC_PACKAGE_VERSION,[[.]]))
@@ -69,6 +72,7 @@ AC_CHECK_HEADERS(unistd.h sys/mman.h)
 
 # Compiler flags
 AC_CANONICAL_HOST
+AC_CHECK_ALIGNOF([struct{char;}])
 if test "x$GCC" = "xyes"; then
 
 	# Make symbols link locally
@@ -91,8 +95,10 @@ if test "x$GCC" = "xyes"; then
 
 	case "$host" in
 		arm-*-*)
-			# Request byte alignment on arm
-			CXXFLAGS="$CXXFLAGS -mstructure-size-boundary=8"
+			if test "x$ac_cv_alignof_struct_char__" != x1; then
+				# Request byte alignment
+				CXXFLAGS="$CXXFLAGS -mstructure-size-boundary=8"
+			fi
 		;;
 	esac
 fi
@@ -125,6 +131,12 @@ if $have_ot; then
 	AC_DEFINE(HAVE_OT, 1, [Have native OpenType Layout backend])
 fi
 AM_CONDITIONAL(HAVE_OT, $have_ot)
+
+have_fallback=true
+if $have_fallback; then
+	AC_DEFINE(HAVE_FALLBACK, 1, [Have simple TrueType Layout backend])
+fi
+AM_CONDITIONAL(HAVE_FALLBACK, $have_fallback)
 
 dnl ===========================================================================
 
@@ -172,7 +184,7 @@ dnl ===========================================================================
 have_introspection=false
 m4_ifdef([GOBJECT_INTROSPECTION_CHECK], [
 	if $have_gobject; then
-		GOBJECT_INTROSPECTION_CHECK([1.32.0])
+		GOBJECT_INTROSPECTION_CHECK([1.34.0])
 		if test "x$found_introspection" = xyes; then
 			have_introspection=true
 		fi
@@ -333,15 +345,30 @@ AC_ARG_WITH(coretext,
 have_coretext=false
 if test "x$with_coretext" = "xyes" -o "x$with_coretext" = "xauto"; then
 	AC_CHECK_TYPE(CTFontRef, have_coretext=true,, [#include <ApplicationServices/ApplicationServices.h>])
+
+	if $have_coretext; then
+		CORETEXT_CFLAGS=
+		CORETEXT_LIBS="-framework ApplicationServices"
+		AC_SUBST(CORETEXT_CFLAGS)
+		AC_SUBST(CORETEXT_LIBS)
+	else
+		# On iOS CoreText and CoreGraphics are stand-alone frameworks
+		if test "x$have_coretext" != "xtrue"; then
+			AC_CHECK_TYPE(CTFontRef, have_coretext=true,, [#include <CoreText/CoreText.h>])
+		fi
+
+		if $have_coretext; then
+			CORETEXT_CFLAGS=
+			CORETEXT_LIBS="-framework CoreText -framework CoreGraphics"
+			AC_SUBST(CORETEXT_CFLAGS)
+			AC_SUBST(CORETEXT_LIBS)
+		fi
+	fi
 fi
 if test "x$with_coretext" = "xyes" -a "x$have_coretext" != "xtrue"; then
 	AC_MSG_ERROR([CoreText support requested but libcoretext not found])
 fi
 if $have_coretext; then
-	CORETEXT_CFLAGS=
-	CORETEXT_LIBS="-framework ApplicationServices"
-	AC_SUBST(CORETEXT_CFLAGS)
-	AC_SUBST(CORETEXT_LIBS)
 	AC_DEFINE(HAVE_CORETEXT, 1, [Have Core Text backend])
 fi
 AM_CONDITIONAL(HAVE_CORETEXT, $have_coretext)

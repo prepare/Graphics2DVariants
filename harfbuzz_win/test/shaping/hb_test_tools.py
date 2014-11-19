@@ -405,13 +405,13 @@ class Unicode:
 
 	@staticmethod
 	def decode (s):
-		return '<' + u','.join ("U+%04X" % ord (u) for u in unicode (s, 'utf-8')).encode ('utf-8') + '>'
+		return u','.join ("U+%04X" % ord (u) for u in unicode (s, 'utf-8')).encode ('utf-8')
 
 	@staticmethod
 	def parse (s):
 		s = re.sub (r"0[xX]", " ", s)
 		s = re.sub (r"[<+>,;&#\\xXuU\n	]", " ", s)
-		return [int (x, 16) for x in s.split (' ') if len (x)]
+		return [int (x, 16) for x in s.split ()]
 
 	@staticmethod
 	def encode (s):

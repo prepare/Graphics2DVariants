@@ -139,7 +139,20 @@ hb_buffer_t::make_room_for (unsigned int num_in,
   return true;
 }
 
-void *
+bool
+hb_buffer_t::shift_forward (unsigned int count)
+{
+  assert (have_output);
+  if (unlikely (!ensure (len + count))) return false;
+
+  memmove (info + idx + count, info + idx, (len - idx) * sizeof (info[0]));
+  len += count;
+  idx += count;
+
+  return true;
+}
+
+hb_buffer_t::scratch_buffer_t *
 hb_buffer_t::get_scratch_buffer (unsigned int *size)
 {
   have_output = false;
@@ -148,8 +161,9 @@ hb_buffer_t::get_scratch_buffer (unsigned int *size)
   out_len = 0;
   out_info = info;
 
-  *size = allocated * sizeof (pos[0]);
-  return pos;
+  assert ((uintptr_t) pos % sizeof (scratch_buffer_t) == 0);
+  *size = allocated * sizeof (pos[0]) / sizeof (scratch_buffer_t);
+  return (scratch_buffer_t *) (void *) pos;
 }
 
 
@@ -164,6 +178,8 @@ hb_buffer_t::reset (void)
 
   hb_unicode_funcs_destroy (unicode);
   unicode = hb_unicode_funcs_get_default ();
+  flags = HB_BUFFER_FLAG_DEFAULT;
+  replacement = HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT;
 
   clear ();
 }
@@ -176,7 +192,6 @@ hb_buffer_t::clear (void)
 
   hb_segment_properties_t default_props = HB_SEGMENT_PROPERTIES_DEFAULT;
   props = default_props;
-  flags = HB_BUFFER_FLAG_DEFAULT;
 
   content_type = HB_BUFFER_CONTENT_TYPE_INVALID;
   in_error = false;
@@ -345,6 +360,44 @@ hb_buffer_t::copy_glyph (void)
   out_len++;
 }
 
+bool
+hb_buffer_t::move_to (unsigned int i)
+{
+  if (!have_output)
+  {
+    assert (i <= len);
+    idx = i;
+    return true;
+  }
+
+  assert (i <= out_len + (len - idx));
+
+  if (out_len < i)
+  {
+    unsigned int count = i - out_len;
+    if (unlikely (!make_room_for (count, count))) return false;
+
+    memmove (out_info + out_len, info + idx, count * sizeof (out_info[0]));
+    idx += count;
+    out_len += count;
+  }
+  else if (out_len > i)
+  {
+    /* Tricky part: rewinding... */
+    unsigned int count = out_len - i;
+
+    if (unlikely (idx < count && !shift_forward (count + 32))) return false;
+
+    assert (idx >= count);
+
+    idx -= count;
+    out_len -= count;
+    memmove (info + idx, out_info + out_len, count * sizeof (out_info[0]));
+  }
+
+  return true;
+}
+
 void
 hb_buffer_t::replace_glyph (hb_codepoint_t glyph_index)
 {
@@ -448,6 +501,10 @@ void
 hb_buffer_t::merge_clusters (unsigned int start,
 			     unsigned int end)
 {
+#ifdef HB_NO_MERGE_CLUSTERS
+  return;
+#endif
+
   if (unlikely (end - start < 2))
     return;
 
@@ -476,6 +533,10 @@ void
 hb_buffer_t::merge_out_clusters (unsigned int start,
 				 unsigned int end)
 {
+#ifdef HB_NO_MERGE_CLUSTERS
+  return;
+#endif
+
   if (unlikely (end - start < 2))
     return;
 
@@ -641,10 +702,11 @@ hb_buffer_get_empty (void)
     HB_OBJECT_HEADER_STATIC,
 
     const_cast<hb_unicode_funcs_t *> (&_hb_unicode_funcs_nil),
-    HB_SEGMENT_PROPERTIES_DEFAULT,
     HB_BUFFER_FLAG_DEFAULT,
+    HB_BUFFER_REPLACEMENT_CODEPOINT_DEFAULT,
 
     HB_BUFFER_CONTENT_TYPE_INVALID,
+    HB_SEGMENT_PROPERTIES_DEFAULT,
     true, /* in_error */
     true, /* have_output */
     true  /* have_positions */
@@ -988,6 +1050,42 @@ hb_buffer_get_flags (hb_buffer_t *buffer)
 
 
 /**
+ * hb_buffer_set_replacement_codepoint:
+ * @buffer: a buffer.
+ * @replacement: 
+ *
+ * 
+ *
+ * Since: 1.0
+ **/
+void
+hb_buffer_set_replacement_codepoint (hb_buffer_t    *buffer,
+				     hb_codepoint_t  replacement)
+{
+  if (unlikely (hb_object_is_inert (buffer)))
+    return;
+
+  buffer->replacement = replacement;
+}
+
+/**
+ * hb_buffer_get_replacement_codepoint:
+ * @buffer: a buffer.
+ *
+ * 
+ *
+ * Return value: 
+ *
+ * Since: 1.0
+ **/
+hb_codepoint_t
+hb_buffer_get_replacement_codepoint (hb_buffer_t    *buffer)
+{
+  return buffer->replacement;
+}
+
+
+/**
  * hb_buffer_reset:
  * @buffer: a buffer.
  *
@@ -1098,7 +1196,10 @@ hb_buffer_set_length (hb_buffer_t  *buffer,
   buffer->len = length;
 
   if (!length)
+  {
+    buffer->content_type = HB_BUFFER_CONTENT_TYPE_INVALID;
     buffer->clear_context (0);
+  }
   buffer->clear_context (1);
 
   return true;
@@ -1227,7 +1328,7 @@ hb_buffer_guess_segment_properties (hb_buffer_t *buffer)
   buffer->guess_segment_properties ();
 }
 
-template <typename T>
+template <bool validate, typename T>
 static inline void
 hb_buffer_add_utf (hb_buffer_t  *buffer,
 		   const T      *text,
@@ -1235,6 +1336,9 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
 		   unsigned int  item_offset,
 		   int           item_length)
 {
+  typedef hb_utf_t<T, true> utf_t;
+  const hb_codepoint_t replacement = buffer->replacement;
+
   assert (buffer->content_type == HB_BUFFER_CONTENT_TYPE_UNICODE ||
 	  (!buffer->len && buffer->content_type == HB_BUFFER_CONTENT_TYPE_INVALID));
 
@@ -1242,7 +1346,7 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
     return;
 
   if (text_length == -1)
-    text_length = hb_utf_strlen (text);
+    text_length = utf_t::strlen (text);
 
   if (item_length == -1)
     item_length = text_length - item_offset;
@@ -1265,7 +1369,7 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
     while (start < prev && buffer->context_len[0] < buffer->CONTEXT_LENGTH)
     {
       hb_codepoint_t u;
-      prev = hb_utf_prev (prev, start, &u);
+      prev = utf_t::prev (prev, start, &u, replacement);
       buffer->context[0][buffer->context_len[0]++] = u;
     }
   }
@@ -1276,7 +1380,7 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
   {
     hb_codepoint_t u;
     const T *old_next = next;
-    next = hb_utf_next (next, end, &u);
+    next = utf_t::next (next, end, &u, replacement);
     buffer->add (u, old_next - (const T *) text);
   }
 
@@ -1286,7 +1390,7 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
   while (next < end && buffer->context_len[1] < buffer->CONTEXT_LENGTH)
   {
     hb_codepoint_t u;
-    next = hb_utf_next (next, end, &u);
+    next = utf_t::next (next, end, &u, replacement);
     buffer->context[1][buffer->context_len[1]++] = u;
   }
 
@@ -1312,7 +1416,7 @@ hb_buffer_add_utf8 (hb_buffer_t  *buffer,
 		    unsigned int  item_offset,
 		    int           item_length)
 {
-  hb_buffer_add_utf (buffer, (const uint8_t *) text, text_length, item_offset, item_length);
+  hb_buffer_add_utf<true> (buffer, (const uint8_t *) text, text_length, item_offset, item_length);
 }
 
 /**
@@ -1334,7 +1438,7 @@ hb_buffer_add_utf16 (hb_buffer_t    *buffer,
 		     unsigned int    item_offset,
 		     int             item_length)
 {
-  hb_buffer_add_utf (buffer, text, text_length, item_offset, item_length);
+  hb_buffer_add_utf<true> (buffer, text, text_length, item_offset, item_length);
 }
 
 /**
@@ -1356,7 +1460,29 @@ hb_buffer_add_utf32 (hb_buffer_t    *buffer,
 		     unsigned int    item_offset,
 		     int             item_length)
 {
-  hb_buffer_add_utf (buffer, text, text_length, item_offset, item_length);
+  hb_buffer_add_utf<true> (buffer, text, text_length, item_offset, item_length);
+}
+
+/**
+ * hb_buffer_add_codepoints:
+ * @buffer: a buffer.
+ * @text: (array length=text_length):
+ * @text_length: 
+ * @item_offset: 
+ * @item_length: 
+ *
+ * 
+ *
+ * Since: 1.0
+ **/
+void
+hb_buffer_add_codepoints (hb_buffer_t          *buffer,
+			  const hb_codepoint_t *text,
+			  int                   text_length,
+			  unsigned int          item_offset,
+			  int                   item_length)
+{
+  hb_buffer_add_utf<false> (buffer, text, text_length, item_offset, item_length);
 }
 
 

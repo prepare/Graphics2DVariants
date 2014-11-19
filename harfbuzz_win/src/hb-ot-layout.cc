@@ -327,9 +327,28 @@ hb_ot_layout_language_get_required_feature_index (hb_face_t    *face,
 						  unsigned int  language_index,
 						  unsigned int *feature_index)
 {
-  const OT::LangSys &l = get_gsubgpos_table (face, table_tag).get_script (script_index).get_lang_sys (language_index);
+  return hb_ot_layout_language_get_required_feature (face,
+						     table_tag,
+						     script_index,
+						     language_index,
+						     feature_index,
+						     NULL);
+}
 
-  if (feature_index) *feature_index = l.get_required_feature_index ();
+hb_bool_t
+hb_ot_layout_language_get_required_feature (hb_face_t    *face,
+					    hb_tag_t      table_tag,
+					    unsigned int  script_index,
+					    unsigned int  language_index,
+					    unsigned int *feature_index,
+					    hb_tag_t     *feature_tag)
+{
+  const OT::GSUBGPOS &g = get_gsubgpos_table (face, table_tag);
+  const OT::LangSys &l = g.get_script (script_index).get_lang_sys (language_index);
+
+  unsigned int index = l.get_required_feature_index ();
+  if (feature_index) *feature_index = index;
+  if (feature_tag) *feature_tag = g.get_feature_tag (index);
 
   return l.has_required_feature ();
 }
@@ -429,7 +448,7 @@ hb_ot_layout_table_get_lookup_count (hb_face_t    *face,
       return hb_ot_layout_from_face (face)->gpos_lookup_count;
     }
   }
-  return -1;
+  return 0;
 }
 
 static void
@@ -468,11 +487,12 @@ _hb_ot_layout_collect_lookups_features (hb_face_t      *face,
   if (!features)
   {
     unsigned int required_feature_index;
-    if (hb_ot_layout_language_get_required_feature_index (face,
-							  table_tag,
-							  script_index,
-							  language_index,
-							  &required_feature_index))
+    if (hb_ot_layout_language_get_required_feature (face,
+						    table_tag,
+						    script_index,
+						    language_index,
+						    &required_feature_index,
+						    NULL))
       _hb_ot_layout_collect_lookups_lookups (face,
 					     table_tag,
 					     required_feature_index,
@@ -783,6 +803,7 @@ hb_ot_layout_get_size_params (hb_face_t    *face,
 struct GSUBProxy
 {
   static const unsigned int table_index = 0;
+  static const bool inplace = false;
   typedef OT::SubstLookup Lookup;
 
   GSUBProxy (hb_face_t *face) :
@@ -796,6 +817,7 @@ struct GSUBProxy
 struct GPOSProxy
 {
   static const unsigned int table_index = 1;
+  static const bool inplace = true;
   typedef OT::PosLookup Lookup;
 
   GPOSProxy (hb_face_t *face) :
@@ -823,10 +845,9 @@ apply_string (OT::hb_apply_context_t *c,
 	      const hb_ot_layout_lookup_accelerator_t &accel)
 {
   bool ret = false;
-  OT::hb_is_inplace_context_t inplace_c (c->face);
-  bool inplace = lookup.is_inplace (&inplace_c);
+  hb_buffer_t *buffer = c->buffer;
 
-  if (unlikely (!c->buffer->len || !c->lookup_mask))
+  if (unlikely (!buffer->len || !c->lookup_mask))
     return false;
 
   c->set_lookup (lookup);
@@ -835,43 +856,43 @@ apply_string (OT::hb_apply_context_t *c,
   {
     /* in/out forward substitution/positioning */
     if (Proxy::table_index == 0)
-      c->buffer->clear_output ();
-    c->buffer->idx = 0;
+      buffer->clear_output ();
+    buffer->idx = 0;
 
-    while (c->buffer->idx < c->buffer->len)
+    while (buffer->idx < buffer->len)
     {
-      if (accel.digest.may_have (c->buffer->cur().codepoint) &&
-	  (c->buffer->cur().mask & c->lookup_mask) &&
+      if (accel.digest.may_have (buffer->cur().codepoint) &&
+	  (buffer->cur().mask & c->lookup_mask) &&
 	  apply_once (c, lookup))
 	ret = true;
       else
-	c->buffer->next_glyph ();
+	buffer->next_glyph ();
     }
     if (ret)
     {
-      if (!inplace)
-	c->buffer->swap_buffers ();
+      if (!Proxy::inplace)
+	buffer->swap_buffers ();
       else
-        assert (!c->buffer->has_separate_output ());
+        assert (!buffer->has_separate_output ());
     }
   }
   else
   {
     /* in-place backward substitution/positioning */
     if (Proxy::table_index == 0)
-      c->buffer->remove_output ();
-    c->buffer->idx = c->buffer->len - 1;
+      buffer->remove_output ();
+    buffer->idx = buffer->len - 1;
     do
     {
-      if (accel.digest.may_have (c->buffer->cur().codepoint) &&
-	  (c->buffer->cur().mask & c->lookup_mask) &&
+      if (accel.digest.may_have (buffer->cur().codepoint) &&
+	  (buffer->cur().mask & c->lookup_mask) &&
 	  apply_once (c, lookup))
 	ret = true;
-      else
-	c->buffer->idx--;
+      /* The reverse lookup doesn't "advance" cursor (for good reason). */
+      buffer->idx--;
 
     }
-    while ((int) c->buffer->idx >= 0);
+    while ((int) buffer->idx >= 0);
   }
 
   return ret;

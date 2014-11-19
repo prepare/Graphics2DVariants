@@ -31,7 +31,6 @@
 
 #include "hb-private.hh"
 
-#include "hb-font.h"
 #include "hb-object-private.hh"
 #include "hb-face-private.hh"
 #include "hb-shaper-private.hh"
@@ -118,12 +117,12 @@ struct hb_font_t {
   /* Convert from parent-font user-space to our user-space */
   inline hb_position_t parent_scale_x_distance (hb_position_t v) {
     if (unlikely (parent && parent->x_scale != x_scale))
-      return v * (int64_t) this->x_scale / this->parent->x_scale;
+      return (hb_position_t) (v * (int64_t) this->x_scale / this->parent->x_scale);
     return v;
   }
   inline hb_position_t parent_scale_y_distance (hb_position_t v) {
     if (unlikely (parent && parent->y_scale != y_scale))
-      return v * (int64_t) this->y_scale / this->parent->y_scale;
+      return (hb_position_t) (v * (int64_t) this->y_scale / this->parent->y_scale);
     return v;
   }
   inline hb_position_t parent_scale_x_position (hb_position_t v) {
@@ -144,6 +143,12 @@ struct hb_font_t {
 
 
   /* Public getters */
+
+  inline hb_bool_t has_glyph (hb_codepoint_t unicode)
+  {
+    hb_codepoint_t glyph;
+    return get_glyph (unicode, 0, &glyph);
+  }
 
   inline hb_bool_t get_glyph (hb_codepoint_t unicode, hb_codepoint_t variation_selector,
 			      hb_codepoint_t *glyph)
@@ -397,7 +402,7 @@ struct hb_font_t {
   }
 
   private:
-  inline hb_position_t em_scale (int16_t v, int scale) { return v * (int64_t) scale / face->get_upem (); }
+  inline hb_position_t em_scale (int16_t v, int scale) { return (hb_position_t) (v * (int64_t) scale / face->get_upem ()); }
 };
 
 #define HB_SHAPER_DATA_CREATE_FUNC_EXTRA_ARGS

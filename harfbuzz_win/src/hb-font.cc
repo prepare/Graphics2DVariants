@@ -31,7 +31,6 @@
 #include "hb-ot-layout-private.hh"
 
 #include "hb-font-private.hh"
-#include "hb-blob.h"
 #include "hb-open-file-private.hh"
 #include "hb-ot-head-table.hh"
 #include "hb-ot-maxp-table.hh"
@@ -358,7 +357,7 @@ hb_font_funcs_get_user_data (hb_font_funcs_t    *ffuncs,
 void
 hb_font_funcs_make_immutable (hb_font_funcs_t *ffuncs)
 {
-  if (hb_object_is_inert (ffuncs))
+  if (unlikely (hb_object_is_inert (ffuncs)))
     return;
 
   ffuncs->immutable = true;
@@ -1035,7 +1034,7 @@ hb_font_get_user_data (hb_font_t          *font,
 void
 hb_font_make_immutable (hb_font_t *font)
 {
-  if (hb_object_is_inert (font))
+  if (unlikely (hb_object_is_inert (font)))
     return;
 
   font->immutable = true;
